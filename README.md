@@ -1,6 +1,6 @@
 # Tacky
 
-A library for building styles in TypeScript.
+A library for building safe, consistent styles in TypeScript.
 
 ```tsx
 const styles = tacky(_ => [
@@ -29,6 +29,8 @@ yarn add tacky-css
 
 ## Why?
 
+Because No One Else Would™
+
 If you use [object styles](https://emotion.sh/docs/object-styles) or [style
 objects](https://styled-components.com/docs/advanced#style-objects) (or
 something else) to represent CSS in your styling library of choice, you may
@@ -39,8 +41,11 @@ liberally in order to capture all possible values of properties that can be
 represented with scalar [CSS data
 types](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Types).
 
-Tacky is a library that takes a less conventional "functional" approach in
-order to provide safety that can't be guaranteed by a `Record` interface alone.
+Tacky is a library inspired by
+[bs-css](https://github.com/reasonml-labs/bs-css) and
+[elm-css](https://github.com/rtfeldman/elm-css) that takes a functional
+approach in order to provide safety that can't be guaranteed by a `Record`
+interface alone.
 
 ### Why are values specified unit-first?
 
@@ -65,12 +70,6 @@ const styles = {
 By having these helper functions produce both the CSS property _and_ value, we
 can avoid this redundancy.
 
-It also makes it incredibly simple to implement aliases/shortcuts:
-```tsx
-const p = padding;
-const px = (...args) => ({ ...paddingLeft(...args), ...paddingRight(...args) });
-```
-
 ### Why all the underscores?
 
 TypeScript has no directive for "import a module into the current namespace".
@@ -79,5 +78,14 @@ object, you can use any identifier without introducing it into the rest of your
 module. I like `_` because it's terse, but you can use whatever you like:
 
 ```tsx
-const styles = tacky(css => [css.color("red"), ...]);
+const styles = tacky(css => [css.color("red")]);
 ```
+
+
+## TODOs
+
+- [ ] Support all (relevant) CSS properties
+- [ ] Support media queries
+- [ ] Support selectors (?)
+- [ ] Companion React library
+- [ ] Auto builds (?)

@@ -1,6 +1,6 @@
 # Tacky
 
-A library for building styles in TypeScript.
+A library for building safe, consistent styles in TypeScript.
 
 ```tsx
 const styles = tacky(_ => [
@@ -39,8 +39,11 @@ liberally in order to capture all possible values of properties that can be
 represented with scalar [CSS data
 types](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Types).
 
-Tacky is a library that takes a less conventional "functional" approach in
-order to provide safety that can't be guaranteed by a `Record` interface alone.
+Tacky is a library inspired by
+[bs-css](https://github.com/reasonml-labs/bs-css) and
+[elm-css](https://github.com/rtfeldman/elm-css) that takes a less conventional
+"functional" approach in order to provide safety that can't be guaranteed by a
+`Record` interface alone.
 
 ### Why are values specified unit-first?
 
@@ -81,3 +84,12 @@ module. I like `_` because it's terse, but you can use whatever you like:
 ```tsx
 const styles = tacky(css => [css.color("red"), ...]);
 ```
+
+
+## TODOs
+
+[] Support all (relevant) CSS properties
+[] Support media queries
+[] Support selectors (?)
+[] Companion React library
+[] Auto builds (?)

@@ -1,11 +1,13 @@
 import * as CSS from "csstype";
 import { CSSColor } from "../color";
+import { CSSImage } from "../image";
 import { KnownCSSValues, TypedCSSProperties } from "../types";
-import { CSSLengthPercentage, Percent } from "../unit";
+import { CSSLength, CSSLengthPercentage, Percent } from "../unit";
 import {
   singleArgProperty,
   PropertyTuple,
   FourDimensionalArgs,
+  FourDimensionalProperty,
   FourDimensionalValue,
 } from "../utils";
 
@@ -57,6 +59,18 @@ export const backgroundClip: BackgroundClip = (...clip: unknown[]) =>
   ["backgroundClip", clip.join(", ") as BackgroundClipValue] as const;
 
 export const backgroundColor = singleArgProperty("backgroundColor");
+
+export type BackgroundImageValue = string & {
+  _tacky_id_background_image: never;
+};
+
+export interface BackgroundImage {
+  (global: CSS.Globals): PropertyTuple<"backgroundImage">;
+  (...backgrounds: [CSSImage, ...CSSImage[]]): PropertyTuple<"backgroundImage">;
+}
+
+export const backgroundImage: BackgroundImage = (...args: unknown[]) =>
+  ["backgroundImage", args.join(", ") as BackgroundImageValue] as const;
 
 // TODO: This is just <box>
 type BackgroundOriginKeyword = Exclude<
@@ -194,27 +208,52 @@ export const borderBottomWidth = singleArgProperty("borderBottomWidth");
 
 export const borderColor = singleArgProperty("borderColor");
 
+export type BorderImageOutsetValue = string & {
+  _tacky_id_image_outset: never;
+};
+
+export const borderImageOutset: FourDimensionalProperty<
+  PropertyTuple<"borderImageOutset">,
+  CSSLength | number
+> = (...args: unknown[]) =>
+  ["borderImageOutset", args.join(" ") as BorderImageOutsetValue] as const;
+
+export type BorderImageRepeatValue = string & {
+  _tacky_id_border_image_repeat: never;
+};
+
+type BorderImageRepeatKeyword = "stretch" | "repeat" | "round" | "space";
+
+type BorderImageRepeatArgs =
+  | [allSides: BorderImageRepeatKeyword]
+  | [
+      topAndBottom: BorderImageRepeatKeyword,
+      leftAndRight: BorderImageRepeatKeyword
+    ];
+
+export const borderImageRepeat = (
+  ...args: [global: CSS.Globals] | BorderImageRepeatArgs
+): PropertyTuple<"borderImageRepeat"> =>
+  ["borderImageRepeat", args.join(" ") as BorderImageRepeatValue] as const;
+
 export type BorderImageSliceValue = string & {
-  _tacky_id_border_imageSlice: never;
+  _tacky_id_border_image_slice: never;
 };
 
 // TODO: Allow "fill" keyword at any position
-export interface BorderImageSlice {
-  (global: CSS.Globals): PropertyTuple<"borderImageSlice">;
-  (all: number | Percent, fill?: "fill"): PropertyTuple<"borderImageSlice">;
-  (
-    vertical: number | Percent,
-    horizontal: number | Percent,
-    fill?: "fill"
-  ): PropertyTuple<"borderImageSlice">;
-  (
-    top: number | Percent,
-    horizontal: number | Percent,
-    bottom: number | Percent,
-    fill?: "fill"
-  ): PropertyTuple<"borderImageSlice">;
-}
-export const borderImageSlice: BorderImageSlice = (...args: unknown[]) =>
+export type BorderImageSliceArgs =
+  | [all: number | Percent, fill?: "fill"]
+  | [vertical: number | Percent, horizontal: number | Percent, fill?: "fill"]
+  | [
+      top: number | Percent,
+      horizontal: number | Percent,
+      bottom: number | Percent,
+      fill?: "fill"
+    ];
+
+export const borderImageSlice = (
+  ...args: [global: CSS.Globals] | BorderImageSliceArgs
+): PropertyTuple<"borderImageSlice"> =>
   ["borderImageSlice", args.join(" ") as BorderImageSliceValue] as const;
 
 export const borderImageSource = singleArgProperty("borderImageSource");

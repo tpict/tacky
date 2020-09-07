@@ -19,6 +19,10 @@ const outOfScopeProperties = [
   "transform",
   "transitionTimingFunction",
 
+  // Difficult to represent syntax authentically. Probably needs a more
+  // opinionated approach
+  "borderImage",
+
   // Poor browser support
   "hangingPunctuation",
   "rotate",

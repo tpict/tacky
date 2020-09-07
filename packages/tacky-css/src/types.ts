@@ -7,10 +7,13 @@ import {
   BackgroundAttachmentValue,
   BackgroundBlendModeValue,
   BackgroundClipValue,
+  BackgroundImageValue,
   BackgroundOriginValue,
   BackgroundPositionValue,
   BackgroundRepeatValue,
   BackgroundSizeValue,
+  BorderImageOutsetValue,
+  BorderImageRepeatValue,
   BorderImageSliceValue,
   BorderRadiusValue,
   BorderValue,
@@ -163,6 +166,7 @@ export interface TypedCSSProperties
   backgroundBlendMode: BackgroundBlendModeValue;
   backgroundClip: BackgroundClipValue;
   backgroundColor: CSSColor;
+  backgroundImage: BackgroundImageValue;
   backgroundOrigin: BackgroundOriginValue;
   backgroundPosition: BackgroundPositionValue;
   backgroundRepeat: BackgroundRepeatValue;
@@ -175,6 +179,8 @@ export interface TypedCSSProperties
   borderBottomRightRadius: CSSLengthPercentage;
   borderBottomWidth: CSSLengthPercentage;
   borderColor: CSSColor;
+  borderImageOutset: BorderImageOutsetValue;
+  borderImageRepeat: BorderImageRepeatValue;
   borderImageSlice: BorderImageSliceValue;
   borderImageSource: KnownCSSValues<"borderImageSource"> | CSSImage;
   borderImageWidth: FourDimensionalValue;

@@ -9,6 +9,9 @@ const styles = tacky(_ => [
   _.fontSize(_.rem(5)),
   _.fontFamily("Times New Roman", "serif"),
   _.boxShadow(_.rem(2), _.rem(2), _.rem(2), _.rem(2), _.rgba(0, 0, 0, 0.5)),
+  _.media([_.media.screen(_.media.minWidth(_.rem(30)))],
+    _.color(_.rgb(0, 255, 0)),
+  ),
 ]);
 
 // Equivalent to
@@ -18,6 +21,9 @@ const styles = {
   fontSize: "5rem",
   fontFamily: '"Times New Roman", sans-serif',
   boxShadow: "2rem 2rem 2rem 2rem rgba(0, 0, 0, 0.5)",
+  ["@media screen and (min-width: 30rem)"]: {
+    color: "rgb(0, 255, 0)",
+  },
 };
 ```
 
@@ -85,7 +91,7 @@ const styles = tacky(css => [css.color("red")]);
 ## TODOs
 
 - [ ] Support all (relevant) CSS properties
-- [ ] Support media queries
+- [x] Support media queries
 - [ ] Support selectors (?)
 - [ ] Companion React library
 - [ ] Auto builds (?)

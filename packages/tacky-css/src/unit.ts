@@ -42,24 +42,41 @@ export type Deg = string & {
   _tacky_id_deg: never;
 };
 
+export const deg = (magnitude: number): Deg => `${magnitude}deg` as Deg;
+
 export type Rad = string & {
   _tacky_id_rad: never;
 };
+
+export const rad = (magnitude: number): Rad => `${magnitude}rad` as Rad;
 
 export type Grad = string & {
   _tacky_id_grad: never;
 };
 
+export const grad = (magnitude: number): Grad => `${magnitude}grad` as Grad;
+
 export type Turn = string & {
   _tacky_id_turn: never;
 };
 
-export const deg = (magnitude: number): Deg => `${magnitude}deg` as Deg;
-export const rad = (magnitude: number): Rad => `${magnitude}rad` as Rad;
-export const grad = (magnitude: number): Grad => `${magnitude}grad` as Grad;
 export const turn = (magnitude: number): Turn => `${magnitude}turn` as Turn;
+
+// Resolution
+export type Dpi = string & { _tacky_id_dpi: never };
+
+export const dpi = (magnitude: number): Dpi => `${magnitude}dpi` as Dpi;
+
+export type Dpcm = string & { _tacky_id_dpi: never };
+
+export const dpcm = (magnitude: number): Dpi => `${magnitude}dpi` as Dpi;
+
+export type Dppx = string & { _tacky_id_dpi: never };
+
+export const dppx = (magnitude: number): Dpi => `${magnitude}dpi` as Dpi;
 
 export type CSSLength = Rem | Em | Px | 0;
 export type CSSLengthPercentage = CSSLength | Percent;
 export type CSSTime = Ms | S | 0;
 export type CSSAngle = Deg | Rad | Grad | Turn;
+export type CSSResolution = Dpi | Dpcm | Dppx;

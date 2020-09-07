@@ -15,6 +15,10 @@ const Example: React.FC = () => {
     _.backgroundColor(_.rgb(0, 0, 128)),
     _.display("inline-block"),
     _.boxShadow(_.rem(2), _.rem(2), _.rem(2), _.rem(2), _.rgba(0, 0, 0, 0.5)),
+    _.media(
+      ["not", _.media.screen(_.media.minWidth(_.px(300)))],
+      _.color(_.rgb(0, 255, 0))
+    ),
   ]);
 
   return <div css={styles}>Hello world</div>;

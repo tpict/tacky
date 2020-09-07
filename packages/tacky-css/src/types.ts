@@ -3,6 +3,7 @@ import * as CSS from "csstype";
 import { CSSColor } from "./color";
 import { FitContent } from "./function";
 import { CSSImage } from "./image";
+import { MediaQuery } from "./media/types";
 import {
   BackgroundAttachmentValue,
   BackgroundBlendModeValue,
@@ -255,6 +256,9 @@ export interface TypedCSSProperties
   // ==========================================================================
 }
 
-export type TypedCSSArray = {
-  [P in keyof TypedCSSProperties]: readonly [P, TypedCSSProperties[P]];
-}[keyof TypedCSSProperties][];
+export type TypedCSSArray = (
+  | {
+      [P in keyof TypedCSSProperties]: readonly [P, TypedCSSProperties[P]];
+    }[keyof TypedCSSProperties]
+  | [MediaQuery, TypedCSSArray]
+)[];

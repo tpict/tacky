@@ -2,9 +2,9 @@
 import {
   BackgroundPositionArgs,
   BorderRadiusEllipticalCorners,
-  FourDimensionalArgs,
 } from "./property";
 import { CSSLengthPercentage } from "./unit";
+import { FourDimensionalArgs } from "./utils";
 
 export type Inset = string & {
   _tacky_id_inset: never;

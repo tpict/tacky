@@ -15,7 +15,6 @@ const outOfScopeProperties = [
   "animationTimingFunction",
   "backdropFilter",
   "background",
-  "backgroundImage",
   "shapeOutside",
   "transform",
   "transitionTimingFunction",
@@ -26,6 +25,7 @@ const outOfScopeProperties = [
   "scale",
   "scrollbarColor",
   "scrollbarWidth",
+  "translate",
 
   // These seem _very_ rarely used, but this might be bias on my behalf as
   // they seem to be targeted at differently-oriented writing systems.
@@ -69,8 +69,12 @@ const outOfScopeProperties = [
 const unsupportedProperties = [
   ...outOfScopeProperties,
   "fontSmoothing", // use is discouraged
+  "pageBreakAfter", // use break-after
+  "pageBreakBefore", // use break-before
+  "pageBreakInside", // use break-inside
   "unicodeBidi", // for DTD only
   "willChange", // last resort
+  "zoom", // use is discouraged
 ];
 
 test("All CSS properties are available", async () => {

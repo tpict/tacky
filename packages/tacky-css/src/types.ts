@@ -11,15 +11,14 @@ import {
   BackgroundPositionValue,
   BackgroundRepeatValue,
   BackgroundSizeValue,
-  BorderValue,
+  BorderImageSliceValue,
   BorderRadiusValue,
-  BorderSliceValue,
+  BorderValue,
   BoxShadowValue,
   ClipPathValue,
   ContainValue,
   FlexValue,
   FlexFlowValue,
-  FourDimensionalValue,
   QuotesValue,
   OverflowValue,
   TextDecorationLineValue,
@@ -27,8 +26,8 @@ import {
   TransitionDelayValue,
   TransitionDurationValue,
   TransitionPropertyValue,
-  TranslateValue,
 } from "./property";
+import { FourDimensionalValue } from "./utils";
 import { CSSLength, CSSLengthPercentage, CSSTime } from "./unit";
 
 // These properties can be safely expressed without custom interfaces
@@ -112,7 +111,6 @@ type PrimitiveUnionProperties = Required<
     | "wordWrap"
     | "writingMode"
     | "zIndex"
-    | "zoom"
   >
 >;
 
@@ -177,6 +175,7 @@ export interface TypedCSSProperties
   borderBottomRightRadius: CSSLengthPercentage;
   borderBottomWidth: CSSLengthPercentage;
   borderColor: CSSColor;
+  borderImageSlice: BorderImageSliceValue;
   borderImageSource: KnownCSSValues<"borderImageSource"> | CSSImage;
   borderImageWidth: FourDimensionalValue;
   borderLeft: CSS.Globals | BorderValue;
@@ -186,7 +185,6 @@ export interface TypedCSSProperties
   borderRight: CSS.Globals | BorderValue;
   borderRightColor: CSS.Globals | CSSColor | "none";
   borderRightWidth: CSSLengthPercentage;
-  borderSlice: BorderSliceValue;
   borderTop: CSS.Globals | BorderValue;
   borderTopColor: CSS.Globals | CSSColor | "none";
   borderTopLeftRadius: CSSLengthPercentage;
@@ -241,7 +239,6 @@ export interface TypedCSSProperties
   transitionDelay: TransitionDelayValue;
   transitionDuration: TransitionDurationValue;
   transitionProperty: TransitionPropertyValue;
-  translate: TranslateValue;
   verticalAlign: KnownCSSValues<"verticalAlign"> | CSSLengthPercentage;
   width: KnownCSSValues<"width"> | CSSLengthPercentage | FitContent;
   wordSpacing: KnownCSSValues<"wordSpacing"> | CSSLengthPercentage;

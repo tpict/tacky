@@ -11,7 +11,7 @@ export { property, unit, color, funktion };
 
 import { TypedCSSArray } from "./types";
 
-const tackyArg = {
+export const tackyArg = {
   ...color,
   ...funktion,
   ...image,
@@ -22,7 +22,7 @@ const tackyArg = {
 
 type TackyArg = typeof tackyArg;
 
-const compile = (styles: TypedCSSArray): CSSObject =>
+export const compile = (styles: TypedCSSArray): CSSObject =>
   styles.reduce((acc, [key, value]) => {
     // Investigate TS2590 without this cast
     acc[key as string] = Array.isArray(value) ? compile(value) : value;

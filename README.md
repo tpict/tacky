@@ -110,6 +110,55 @@ const styles = tacky(css => [css.color("red")]);
 ```
 
 
+## How?
+
+### Usage
+
+Complete documentation is pending (sorry), but as a rule of thumb:
+- Styles are represented as an array of `[cssProperty, propertyValue]` tuples.
+  These tuples are generated using property functions.
+- Property functions have the same name as their CSS property, but are
+  `camelCase` instead of `kebab-case`, e.g. `background-color: red;` ->
+  `tacky(_ => [_.backgroundColor("red")])`
+- The functions accept an argument for each argument\* of the property, e.g.
+  `background-position: top left;` -> `_.backgroundPosition("top", "left")`. If
+  the property accepts multiple values, wrap each group of arguments in an
+  array e.g.  `background-position: top right, bottom left;` ->
+  `_.backgroundPosition(["top", "right"], ["bottom", "left"])`
+- Wherever you would use a unit (length, time, angle) or a data type (`url`,
+  `linear-gradient` etc) there's a function of the same naming convention that
+  you should call instead of providing a string.
+
+\* Arguments in a CSS syntax are confusingly referred to "values" in the
+official documentation, for example in `margin: 5px 10px;`, "5px" and "10px"
+are values. When a syntax accepts multiple groups of values e.g.
+`background-position: top right, bottom left;`, those groups are referred to
+as... values. For the sake of clarity, I'm calling arguments arguments and
+values values.
+
+### Runtime vs macro
+
+You can import Tacky like so:
+```tsx
+import { tacky } from "tacky";
+```
+and you'll have a WYSIWG experience. Inspect your compiled JavaScript and
+you'll find as many additional function calls as you wrote in the source.
+
+If you have
+[babel-plugin-macros](https://github.com/kentcdodds/babel-plugin-macros)
+installed and configured, you can import the Tacky macro instead:
+```tsx
+import { tacky } from "tacky/macro";
+```
+and it'll pre-evaluate your styles as much as it possibly can, reducing the
+number of function calls (and thus the fraction of the Tacky library that
+actually ships with your bundle). If you're doing something funky with Tacky
+then you'll probably get a compilation error telling you not to do that, but
+feel free to open an issue if you have a legitimate use case that fails to
+build.
+
+
 ## TODOs
 
 - [ ] Support all (relevant) CSS properties

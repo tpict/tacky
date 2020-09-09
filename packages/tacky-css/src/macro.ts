@@ -7,6 +7,10 @@ import { nanoid } from "nanoid";
 import { tackyArg as _, compile } from "./index";
 import type { Tacky } from "./index";
 
+const generalError = new Error(
+  "Tacky has been called in a manner unsupported by its macro implementation. Please see the usage example in the README or consider using the runtime implementation instead."
+);
+
 const macro = createMacro(({ babel, references }) => {
   const t = babel.types;
   const { tacky = [] } = references;
@@ -15,13 +19,13 @@ const macro = createMacro(({ babel, references }) => {
     const functionPath = path.parentPath;
     if (!functionPath.isCallExpression()) {
       // Tacky wasn't called
-      return;
+      throw generalError;
     }
 
     const args = functionPath.get("arguments");
     if (!Array.isArray(args)) {
       // When does this ever happen?
-      return;
+      throw generalError;
     }
 
     const callback = args[0];
@@ -30,21 +34,18 @@ const macro = createMacro(({ babel, references }) => {
       !callback.isFunctionExpression()
     ) {
       // Function wasn't declared inline, or invalid call
-      // TODO: handle former case
-      return;
+      throw generalError;
     }
 
     const stylesArray = callback.get("body");
     if (Array.isArray(stylesArray) || !stylesArray.isArrayExpression()) {
-      // Array wasn't declared inline, or invalid function body
-      // TODO: handle former case
-      return;
+      throw generalError;
     }
 
     const tackyParam = callback.node.params[0];
     if (tackyParam.type !== "Identifier") {
       // Called in an odd way. Is there any reason to do this?
-      return;
+      throw generalError;
     }
 
     const tackyParamName = tackyParam.name;
@@ -84,6 +85,12 @@ const macro = createMacro(({ babel, references }) => {
 
           // For each arg, replace any non-literal expression with a string ID
           path.get("arguments").forEach(argPath => {
+            if (argPath.isSpreadElement()) {
+              // not supported yet, spreading the arguments precludes
+              // pre-evaluation... for now
+              throw generalError;
+            }
+
             const node = argPath.node;
             if (node.type !== "Identifier") {
               return node;

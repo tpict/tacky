@@ -1,4 +1,4 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
 // TODO: This is incorrect
-export const display = singleArgProperty("display");
+export const display = knownUnionProperty("display");

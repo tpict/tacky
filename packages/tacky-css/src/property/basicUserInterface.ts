@@ -1,19 +1,29 @@
-import { singleArgProperty } from "../utils";
+import { CSSColor } from "../color";
+import { KnownCSSValues } from "../types";
+import { CSSLength } from "../unit";
+import { knownUnionProperty, variantProperty } from "../utils";
 
-export const boxSizing = singleArgProperty("boxSizing");
+export const boxSizing = knownUnionProperty("boxSizing");
 
-export const caretColor = singleArgProperty("caretColor");
+export const caretColor = variantProperty<"caretColor", CSSColor | "auto">(
+  "caretColor"
+);
 
-export const cursor = singleArgProperty("cursor");
+export const cursor = knownUnionProperty("cursor");
 
-export const outlineColor = singleArgProperty("outlineColor");
+export const outlineColor = variantProperty<"outlineColor", CSSColor>(
+  "outlineColor"
+);
 
-export const outlineStyle = singleArgProperty("outlineStyle");
+export const outlineStyle = knownUnionProperty("outlineStyle");
 
-export const outlineWidth = singleArgProperty("outlineWidth");
+export const outlineWidth = variantProperty<
+  "outlineWidth",
+  KnownCSSValues<"outlineWidth"> | CSSLength
+>("outlineWidth");
 
-export const resize = singleArgProperty("resize");
+export const resize = knownUnionProperty("resize");
 
-export const textOverflow = singleArgProperty("textOverflow");
+export const textOverflow = knownUnionProperty("textOverflow");
 
-export const userSelect = singleArgProperty("userSelect");
+export const userSelect = knownUnionProperty("userSelect");

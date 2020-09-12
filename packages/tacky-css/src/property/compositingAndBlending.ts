@@ -1,23 +1,19 @@
 import * as CSS from "csstype";
-import { KnownCSSValues } from "../types";
-import { singleArgProperty, PropertyTuple } from "../utils";
+import { KnownCSSValues, TypedCSSProperties } from "../types";
+import { knownUnionProperty, PropertyTuple } from "../utils";
 
 type BackgroundBlendMode = Exclude<
   KnownCSSValues<"backgroundBlendMode">,
   CSS.Globals
 >;
 
-export type BackgroundBlendModeValue = string & {
-  _tacky_id_background_blend_mode: never;
-};
-
 export const backgroundBlendMode = (
   ...attachment: [CSS.Globals] | [BackgroundBlendMode, ...BackgroundBlendMode[]]
 ): PropertyTuple<"backgroundBlendMode"> => [
   "backgroundBlendMode",
-  attachment.join(", ") as BackgroundBlendModeValue,
+  attachment.join(", ") as TypedCSSProperties["backgroundBlendMode"],
 ];
 
-export const isolation = singleArgProperty("isolation");
+export const isolation = knownUnionProperty("isolation");
 
-export const mixBlendMode = singleArgProperty("mixBlendMode");
+export const mixBlendMode = knownUnionProperty("mixBlendMode");

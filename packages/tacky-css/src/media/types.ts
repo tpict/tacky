@@ -1,15 +1,15 @@
+import { TackyVariant } from "../types";
+
 // e.g. (min-width: 30rem)
-export type MediaExpression = string & { _tacky_id_media_expression: never };
+export type MediaExpression = TackyVariant<"media_expression">;
 
 // e.g. screen
-export type MediaType = string & { _tacky_id_media_type: never };
+export type MediaType = TackyVariant<"media_type">;
 
 // e.g. screen and (min-width: 30rem)
-export type MediaTypeExpression = string & {
-  _tacky_id_media_type_expression: never;
-};
+export type MediaTypeExpression = TackyVariant<"media_expression">;
 
 export type AnyMediaMember = MediaType | MediaExpression | MediaTypeExpression;
 
 // e.g. @media screen and (min-width: 30rem)
-export type MediaQuery = string & { _tacky_id_media_query: never };
+export type MediaQuery = TackyVariant<"media_query">;

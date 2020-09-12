@@ -1,3 +1,3 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const backfaceVisibility = singleArgProperty("backfaceVisibility");
+export const backfaceVisibility = knownUnionProperty("backfaceVisibility");

@@ -1,3 +1,3 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const pointerEvents = singleArgProperty("pointerEvents");
+export const pointerEvents = knownUnionProperty("pointerEvents");

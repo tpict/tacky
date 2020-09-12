@@ -1,5 +1,5 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const imageRendering = singleArgProperty("imageRendering");
+export const imageRendering = knownUnionProperty("imageRendering");
 
-export const objectFit = singleArgProperty("objectFit");
+export const objectFit = knownUnionProperty("objectFit");

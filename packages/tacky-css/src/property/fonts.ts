@@ -1,4 +1,6 @@
-import { singleArgProperty, PropertyTuple } from "../utils";
+import { TypedCSSProperties } from "../types";
+import { CSSLengthPercentage } from "../unit";
+import { knownUnionProperty, PropertyTuple, variantProperty } from "../utils";
 
 // TODO: User-extendable interface
 export const fontFamily = (
@@ -7,23 +9,28 @@ export const fontFamily = (
   "fontFamily",
   fontFamilies
     .map(family => (family.includes(" ") ? `"${family}"` : family))
-    .join(", "),
+    .join(", ") as TypedCSSProperties["fontFamily"],
 ];
 
-export const fontKerning = singleArgProperty("fontKerning");
+export const fontKerning = knownUnionProperty("fontKerning");
 
-export const fontOpticalSizing = singleArgProperty("fontOpticalSizing");
+export const fontOpticalSizing = knownUnionProperty("fontOpticalSizing");
 
-export const fontSize = singleArgProperty("fontSize");
+export const fontSize = variantProperty<"fontSize", CSSLengthPercentage>(
+  "fontSize"
+);
 
-export const fontSizeAdjust = singleArgProperty("fontSizeAdjust");
+export const fontSizeAdjust = knownUnionProperty("fontSizeAdjust");
 
-export const fontStretch = singleArgProperty("fontStretch");
+export const fontStretch = knownUnionProperty("fontStretch");
 
-export const fontVariantCaps = singleArgProperty("fontVariantCaps");
+export const fontVariantCaps = knownUnionProperty("fontVariantCaps");
 
-export const fontVariantPosition = singleArgProperty("fontVariantPosition");
+export const fontVariantPosition = knownUnionProperty("fontVariantPosition");
 
-export const lineHeight = singleArgProperty("lineHeight");
+export const lineHeight = variantProperty<
+  "lineHeight",
+  CSSLengthPercentage | number
+>("lineHeight");
 
-export const fontWeight = singleArgProperty("fontWeight");
+export const fontWeight = knownUnionProperty("fontWeight");

@@ -1,6 +1,7 @@
 import { BackgroundPositionArgs } from "./property";
 import { CSSColor } from "./color";
 import { CSSLengthPercentage, Percent, CSSAngle } from "./unit";
+import { TackyVariant } from "./types";
 import { CSSURL } from "./function";
 
 type SideOrCorner =
@@ -67,10 +68,7 @@ export interface LinearGradientFunction<Return> {
   ): Return;
 }
 
-export type LinearGradient = string & {
-  _tacky_id_linear_gradient: never;
-};
-
+export type LinearGradient = TackyVariant<"linearGradient">;
 export const linearGradient: LinearGradientFunction<LinearGradient> = (
   ...args
 ) => {
@@ -79,9 +77,7 @@ export const linearGradient: LinearGradientFunction<LinearGradient> = (
     .join(", ")})` as LinearGradient;
 };
 
-export type RepeatingLinearGradient = string & {
-  _tacky_id_repeating_linear_gradient: never;
-};
+export type RepeatingLinearGradient = TackyVariant<"repeatingLinearGradient">;
 export const repeatingLinearGradient: LinearGradientFunction<RepeatingLinearGradient> = (
   ...args
 ) => {
@@ -90,7 +86,7 @@ export const repeatingLinearGradient: LinearGradientFunction<RepeatingLinearGrad
     .join(", ")})` as RepeatingLinearGradient;
 };
 
-type RadialGradient = string & { _tacky_id_repeating_linear_gradient: never };
+export type RadialGradient = TackyVariant<"RadialGradient">;
 type RadialGradientShape = "circle" | "ellipse";
 type RadialGradientExtentKeyword =
   | "closest-side"
@@ -122,9 +118,7 @@ export const radialGradient: RadialGradientFunction<RadialGradient> = (
     .join(", ")})` as RadialGradient;
 };
 
-export type RepeatingRadialGradient = string & {
-  _tacky_id_repeating_radial_gradient: never;
-};
+export type RepeatingRadialGradient = TackyVariant<"RepeatingRadialGradient">;
 export const repeatingRadialGradient: RadialGradientFunction<RepeatingRadialGradient> = (
   ...args
 ) => {

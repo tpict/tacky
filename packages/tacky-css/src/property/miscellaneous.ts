@@ -1,5 +1,5 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const all = singleArgProperty("all");
+export const all = knownUnionProperty("all");
 
-export const textRendering = singleArgProperty("textRendering");
+export const textRendering = knownUnionProperty("textRendering");

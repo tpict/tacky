@@ -1,59 +1,95 @@
+import { FitContent } from "../function";
+import { KnownCSSValues, TypedCSSProperties } from "../types";
+import { CSSLengthPercentage } from "../unit";
 import {
-  singleArgProperty,
+  knownUnionProperty,
+  variantProperty,
   PropertyTuple,
   FourDimensionalArgs,
-  FourDimensionalValue,
 } from "../utils";
 
-// TODO: Fix this
-export const height = singleArgProperty("height");
+export const height = variantProperty<
+  "height",
+  KnownCSSValues<"height"> | CSSLengthPercentage | FitContent
+>("height");
 
 // TODO: This is missing from the MDN page on Box Model module
-export const margin = (...args: FourDimensionalArgs): PropertyTuple<"margin"> =>
-  ["margin", args.join(" ") as FourDimensionalValue] as const;
+export const margin = (...args: FourDimensionalArgs) =>
+  ["margin", args.join(" ") as TypedCSSProperties["margin"]] as const;
 
-export const marginBottom = singleArgProperty("marginBottom");
+export const marginBottom = variantProperty<
+  "marginBottom",
+  CSSLengthPercentage
+>("marginBottom");
 
-export const marginLeft = singleArgProperty("marginLeft");
+export const marginLeft = variantProperty<"marginLeft", CSSLengthPercentage>(
+  "marginLeft"
+);
 
-export const marginRight = singleArgProperty("marginRight");
+export const marginRight = variantProperty<"marginRight", CSSLengthPercentage>(
+  "marginRight"
+);
 
-export const marginTop = singleArgProperty("marginTop");
+export const marginTop = variantProperty<"marginTop", CSSLengthPercentage>(
+  "marginTop"
+);
 
-export const minHeight = singleArgProperty("minHeight");
+export const minHeight = variantProperty<"minHeight", CSSLengthPercentage>(
+  "minHeight"
+);
 
-export const minWidth = singleArgProperty("minWidth");
+export const minWidth = variantProperty<"minWidth", CSSLengthPercentage>(
+  "minWidth"
+);
 
-export const maxHeight = singleArgProperty("maxHeight");
+export const maxHeight = variantProperty<"maxHeight", CSSLengthPercentage>(
+  "maxHeight"
+);
 
-export const maxWidth = singleArgProperty("maxWidth");
+export const maxWidth = variantProperty<"maxWidth", CSSLengthPercentage>(
+  "maxWidth"
+);
 
-export const overscrollBehaviorBlock = singleArgProperty(
+export const overscrollBehaviorBlock = knownUnionProperty(
   "overscrollBehaviorBlock"
 );
 
-export const overscrollBehaviorInline = singleArgProperty(
+export const overscrollBehaviorInline = knownUnionProperty(
   "overscrollBehaviorInline"
 );
 
-export const overscrollBehaviorX = singleArgProperty("overscrollBehaviorX");
+export const overscrollBehaviorX = knownUnionProperty("overscrollBehaviorX");
 
-export const overscrollBehaviorY = singleArgProperty("overscrollBehaviorY");
+export const overscrollBehaviorY = knownUnionProperty("overscrollBehaviorY");
 
 export const padding = (
   ...args: FourDimensionalArgs
 ): PropertyTuple<"padding"> =>
-  ["padding", args.join(" ") as FourDimensionalValue] as const;
+  ["padding", args.join(" ") as TypedCSSProperties["padding"]] as const;
 
-export const paddingBottom = singleArgProperty("paddingBottom");
+export const paddingBottom = variantProperty<
+  "paddingBottom",
+  CSSLengthPercentage
+>("paddingBottom");
 
-export const paddingLeft = singleArgProperty("paddingLeft");
+export const paddingLeft = variantProperty<"paddingLeft", CSSLengthPercentage>(
+  "paddingLeft"
+);
 
-export const paddingRight = singleArgProperty("paddingRight");
+export const paddingRight = variantProperty<
+  "paddingRight",
+  CSSLengthPercentage
+>("paddingRight");
 
-export const paddingTop = singleArgProperty("paddingTop");
+export const paddingTop = variantProperty<"paddingTop", CSSLengthPercentage>(
+  "paddingTop"
+);
 
-export const visibility = singleArgProperty("visibility");
+export const visibility = variantProperty<"visibility", CSSLengthPercentage>(
+  "visibility"
+);
 
-// TODO: Fix this
-export const width = singleArgProperty("width");
+export const width = variantProperty<
+  "width",
+  KnownCSSValues<"width"> | CSSLengthPercentage | FitContent
+>("width");

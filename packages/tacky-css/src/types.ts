@@ -1,38 +1,6 @@
 import * as CSS from "csstype";
 
-import { CSSColor } from "./color";
-import { FitContent } from "./function";
-import { CSSImage } from "./image";
 import { MediaQuery } from "./media/types";
-import {
-  BackgroundAttachmentValue,
-  BackgroundBlendModeValue,
-  BackgroundClipValue,
-  BackgroundImageValue,
-  BackgroundOriginValue,
-  BackgroundPositionValue,
-  BackgroundRepeatValue,
-  BackgroundSizeValue,
-  BorderImageOutsetValue,
-  BorderImageRepeatValue,
-  BorderImageSliceValue,
-  BorderRadiusValue,
-  BorderValue,
-  BoxShadowValue,
-  ClipPathValue,
-  ContainValue,
-  FlexValue,
-  FlexFlowValue,
-  QuotesValue,
-  OverflowValue,
-  TextDecorationLineValue,
-  TextShadowValue,
-  TransitionDelayValue,
-  TransitionDurationValue,
-  TransitionPropertyValue,
-} from "./property";
-import { FourDimensionalValue } from "./utils";
-import { CSSLength, CSSLengthPercentage, CSSTime } from "./unit";
 
 // These properties can be safely expressed without custom interfaces
 type PrimitiveUnionProperties = Required<
@@ -160,101 +128,113 @@ type UnionOfStringProperties = {
     | "opacity"]: KnownCSSValues<P>;
 };
 
-export interface TypedCSSProperties
-  extends PrimitiveUnionProperties,
-    UnionOfStringProperties {
-  backgroundAttachment: BackgroundAttachmentValue;
-  backgroundBlendMode: BackgroundBlendModeValue;
-  backgroundClip: BackgroundClipValue;
-  backgroundColor: CSSColor;
-  backgroundImage: BackgroundImageValue;
-  backgroundOrigin: BackgroundOriginValue;
-  backgroundPosition: BackgroundPositionValue;
-  backgroundRepeat: BackgroundRepeatValue;
-  backgroundSize: BackgroundSizeValue;
-  blockSize: KnownCSSValues<"blockSize"> | CSSLengthPercentage | FitContent;
-  border: CSS.Globals | BorderValue;
-  borderBottom: CSS.Globals | BorderValue;
-  borderBottomColor: CSS.Globals | CSSColor | "none";
-  borderBottomLeftRadius: CSSLengthPercentage;
-  borderBottomRightRadius: CSSLengthPercentage;
-  borderBottomWidth: CSSLengthPercentage;
-  borderColor: CSSColor;
-  borderImageOutset: BorderImageOutsetValue;
-  borderImageRepeat: BorderImageRepeatValue;
-  borderImageSlice: BorderImageSliceValue;
-  borderImageSource: KnownCSSValues<"borderImageSource"> | CSSImage;
-  borderImageWidth: FourDimensionalValue;
-  borderLeft: CSS.Globals | BorderValue;
-  borderLeftColor: CSS.Globals | CSSColor | "none";
-  borderLeftWidth: CSSLengthPercentage;
-  borderRadius: BorderRadiusValue;
-  borderRight: CSS.Globals | BorderValue;
-  borderRightColor: CSS.Globals | CSSColor | "none";
-  borderRightWidth: CSSLengthPercentage;
-  borderTop: CSS.Globals | BorderValue;
-  borderTopColor: CSS.Globals | CSSColor | "none";
-  borderTopLeftRadius: CSSLengthPercentage;
-  borderTopRightRadius: CSSLengthPercentage;
-  borderTopWidth: CSSLengthPercentage;
-  borderWidth: FourDimensionalValue;
-  bottom: CSSLengthPercentage | "auto";
-  boxShadow: BoxShadowValue;
-  caretColor: CSS.Globals | CSSColor | "auto";
-  clipPath: ClipPathValue;
-  color: CSSColor;
-  contain: ContainValue;
-  flex: FlexValue;
-  flexFlow: FlexFlowValue;
-  fontFamily: string;
-  fontSize: CSSLengthPercentage;
-  gridRowGap: KnownCSSValues<"rowGap"> | CSSLengthPercentage;
-  height: CSSLengthPercentage;
-  inlineSize: KnownCSSValues<"inlineSize"> | FitContent | CSSLengthPercentage;
-  left: CSSLengthPercentage | "auto";
-  letterSpacing: KnownCSSValues<"letterSpacing"> | CSSLengthPercentage;
-  lineHeight: CSSLengthPercentage | number;
-  margin: FourDimensionalValue;
-  marginBottom: CSSLengthPercentage;
-  marginLeft: CSSLengthPercentage;
-  marginRight: CSSLengthPercentage;
-  marginTop: CSSLengthPercentage;
-  maxHeight: CSSLengthPercentage;
-  maxWidth: CSSLengthPercentage;
-  minHeight: CSSLengthPercentage;
-  minWidth: CSSLengthPercentage;
-  outlineColor: CSS.Globals | CSSColor;
-  outlineWidth: KnownCSSValues<"outlineWidth"> | CSSLength;
-  overflow: OverflowValue;
-  padding: FourDimensionalValue;
-  paddingBottom: CSSLengthPercentage;
-  paddingLeft: CSSLengthPercentage;
-  paddingRight: CSSLengthPercentage;
-  paddingTop: CSSLengthPercentage;
-  quotes: QuotesValue;
-  right: CSSLengthPercentage | "auto";
-  rowGap: KnownCSSValues<"rowGap"> | CSSLengthPercentage;
-  shapeMargin: CSS.Globals | CSSLengthPercentage;
-  tabSize: CSS.Properties<never>["tabSize"] | CSSLengthPercentage;
-  textDecorationColor: KnownCSSValues<"textDecorationColor"> | CSSColor;
-  textDecorationLine: TextDecorationLineValue;
-  textDecorationThickness:
-    | KnownCSSValues<"textDecorationThickness">
-    | CSSLengthPercentage;
-  textShadow: TextShadowValue;
-  top: CSSLengthPercentage | "auto";
-  transitionDelay: TransitionDelayValue;
-  transitionDuration: TransitionDurationValue;
-  transitionProperty: TransitionPropertyValue;
-  verticalAlign: KnownCSSValues<"verticalAlign"> | CSSLengthPercentage;
-  width: KnownCSSValues<"width"> | CSSLengthPercentage | FitContent;
-  wordSpacing: KnownCSSValues<"wordSpacing"> | CSSLengthPercentage;
-  // TODO multiple animations =================================================
-  animationDelay: KnownCSSValues<"animationDelay"> | CSSTime;
-  animationDuration: KnownCSSValues<"animationDuration"> | CSSTime;
-  animationIterationCount: KnownCSSValues<"animationIterationCount"> | CSSTime;
-  // ==========================================================================
-}
+// Terminology taken from ReasonML - the idea is something like a variant that
+// takes a single string arg, so the type system can distinguish strings from
+// different sources even if their values aren't known.
+//
+// TODO: In TS 4.1 use
+// export type TackyVariant<T extends string> = string & {[_ in T as `_tacky_id_${T}`]: never };
+// This is safer as users will be less likely to access the "brand" property
+// (which is removed by the Babel macro)
+export type TackyVariant<T extends string> = string & { _tacky_id: T };
+
+type TackyVariantRecord<T extends keyof CSS.Properties> = {
+  [Property in T]: TackyVariant<Property>;
+};
+
+export type TypedCSSProperties = PrimitiveUnionProperties &
+  UnionOfStringProperties &
+  TackyVariantRecord<
+    | "backgroundAttachment"
+    | "backgroundBlendMode"
+    | "backgroundClip"
+    | "backgroundColor"
+    | "backgroundImage"
+    | "backgroundOrigin"
+    | "backgroundPosition"
+    | "backgroundRepeat"
+    | "backgroundSize"
+    | "blockSize"
+    | "border"
+    | "borderBottom"
+    | "borderBottomColor"
+    | "borderBottomLeftRadius"
+    | "borderBottomRightRadius"
+    | "borderBottomWidth"
+    | "borderColor"
+    | "borderImageOutset"
+    | "borderImageRepeat"
+    | "borderImageSlice"
+    | "borderImageSource"
+    | "borderImageWidth"
+    | "borderLeft"
+    | "borderLeftColor"
+    | "borderLeftWidth"
+    | "borderRadius"
+    | "borderRight"
+    | "borderRightColor"
+    | "borderRightWidth"
+    | "borderTop"
+    | "borderTopColor"
+    | "borderTopLeftRadius"
+    | "borderTopRightRadius"
+    | "borderTopWidth"
+    | "borderWidth"
+    | "bottom"
+    | "boxShadow"
+    | "caretColor"
+    | "clipPath"
+    | "color"
+    | "contain"
+    | "flex"
+    | "flexFlow"
+    | "fontFamily"
+    | "fontSize"
+    | "gridRowGap"
+    | "height"
+    | "inlineSize"
+    | "left"
+    | "letterSpacing"
+    | "lineHeight"
+    | "margin"
+    | "marginBottom"
+    | "marginLeft"
+    | "marginRight"
+    | "marginTop"
+    | "maxHeight"
+    | "maxWidth"
+    | "minHeight"
+    | "minWidth"
+    | "outlineColor"
+    | "outlineWidth"
+    | "overflow"
+    | "padding"
+    | "paddingBottom"
+    | "paddingLeft"
+    | "paddingRight"
+    | "paddingTop"
+    | "quotes"
+    | "right"
+    | "rowGap"
+    | "shapeMargin"
+    | "tabSize"
+    | "textDecorationColor"
+    | "textDecorationLine"
+    | "textDecorationThickness"
+    | "textShadow"
+    | "top"
+    | "transitionDelay"
+    | "transitionDuration"
+    | "transitionProperty"
+    | "verticalAlign"
+    | "width"
+    | "wordSpacing"
+    // TODO multiple animations ===============================================
+    | "animationDelay"
+    | "animationDuration"
+    | "animationIterationCount"
+    // ========================================================================
+  >;
 
 export type TypedCSSArray = (
   | {

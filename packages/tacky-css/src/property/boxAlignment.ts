@@ -1,17 +1,25 @@
-import { singleArgProperty } from "../utils";
+import { KnownCSSValues } from "../types";
+import { CSSLengthPercentage } from "../unit";
+import { knownUnionProperty, variantProperty } from "../utils";
 
-export const alignContent = singleArgProperty("alignContent");
+export const alignContent = knownUnionProperty("alignContent");
 
-export const alignItems = singleArgProperty("alignItems");
+export const alignItems = knownUnionProperty("alignItems");
 
-export const alignSelf = singleArgProperty("alignSelf");
+export const alignSelf = knownUnionProperty("alignSelf");
 
-export const gridRowGap = singleArgProperty("gridRowGap");
+export const gridRowGap = variantProperty<
+  "gridRowGap",
+  KnownCSSValues<"rowGap"> | CSSLengthPercentage
+>("gridRowGap");
 
-export const justifyContent = singleArgProperty("justifyContent");
+export const justifyContent = knownUnionProperty("justifyContent");
 
-export const justifyItems = singleArgProperty("justifyItems");
+export const justifyItems = knownUnionProperty("justifyItems");
 
-export const justifySelf = singleArgProperty("justifySelf");
+export const justifySelf = knownUnionProperty("justifySelf");
 
-export const rowGap = singleArgProperty("rowGap");
+export const rowGap = variantProperty<
+  "rowGap",
+  KnownCSSValues<"rowGap"> | CSSLengthPercentage
+>("rowGap");

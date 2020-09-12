@@ -1,3 +1,3 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const scrollBehavior = singleArgProperty("scrollBehavior");
+export const scrollBehavior = knownUnionProperty("scrollBehavior");

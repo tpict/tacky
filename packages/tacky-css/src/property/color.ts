@@ -1,5 +1,6 @@
-import { singleArgProperty } from "../utils";
+import { CSSColor } from "../color";
+import { knownUnionProperty, variantProperty } from "../utils";
 
-export const color = singleArgProperty("color");
-export const colorAdjust = singleArgProperty("colorAdjust");
-export const opacity = singleArgProperty("opacity");
+export const color = variantProperty<"color", CSSColor>("color");
+export const colorAdjust = knownUnionProperty("colorAdjust");
+export const opacity = knownUnionProperty("opacity");

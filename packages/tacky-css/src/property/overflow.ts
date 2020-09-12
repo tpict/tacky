@@ -1,10 +1,8 @@
 import * as CSS from "csstype";
-import { KnownCSSValues } from "../types";
-import { PropertyTuple, singleArgProperty } from "../utils";
+import { KnownCSSValues, TypedCSSProperties } from "../types";
+import { PropertyTuple, knownUnionProperty } from "../utils";
 
 type OverflowKeyword = Exclude<KnownCSSValues<"overflow">, CSS.Globals>;
-
-export type OverflowValue = string & { _tacky_id_overflow: never };
 
 export interface Overflow {
   (xy: OverflowKeyword | CSS.Globals): PropertyTuple<"overflow">;
@@ -12,8 +10,8 @@ export interface Overflow {
 }
 
 export const overflow: Overflow = (...args: unknown[]) =>
-  ["overflow", args.join(" ") as OverflowValue] as const;
+  ["overflow", args.join(" ") as TypedCSSProperties["overflow"]] as const;
 
-export const overflowX = singleArgProperty("overflowX");
+export const overflowX = knownUnionProperty("overflowX");
 
-export const overflowY = singleArgProperty("overflowY");
+export const overflowY = knownUnionProperty("overflowY");

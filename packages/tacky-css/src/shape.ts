@@ -3,12 +3,11 @@ import {
   BackgroundPositionArgs,
   BorderRadiusEllipticalCorners,
 } from "./property";
+import { TackyVariant } from "./types";
 import { CSSLengthPercentage } from "./unit";
 import { FourDimensionalArgs } from "./utils";
 
-export type Inset = string & {
-  _tacky_id_inset: never;
-};
+export type Inset = TackyVariant<"inset">;
 
 export const inset = (
   ...args: [
@@ -19,9 +18,7 @@ export const inset = (
 
 type ShapeRadius = CSSLengthPercentage | "closest-side" | "farthest-side";
 
-export type Circle = string & {
-  _tacky_id_circle: never;
-};
+export type Circle = TackyVariant<"circle">;
 
 export const circle = (
   ...args: [
@@ -30,9 +27,7 @@ export const circle = (
   ]
 ): Circle => `circle(${args.join(" ")})` as Circle;
 
-export type Ellipse = string & {
-  _tacky_id_ellipse: never;
-};
+export type Ellipse = TackyVariant<"ellipse">;
 
 export const ellipse = (
   ...args: [
@@ -44,9 +39,7 @@ export const ellipse = (
 type FillRule = "nonzero" | "evenodd";
 type Vertex = [xi: CSSLengthPercentage, yi: CSSLengthPercentage];
 
-export type Polygon = string & {
-  _tacky_id_polygon: never;
-};
+export type Polygon = TackyVariant<"polygon">;
 
 export const polygon = (
   ...args: [...([] | [fill: FillRule]), ...vertices: [Vertex, ...Vertex[]]]

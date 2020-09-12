@@ -1,8 +1,9 @@
 import * as CSS from "csstype";
+import { TackyVariant } from "../types";
 import { PropertyTuple } from "../utils";
 
 // TODO: Prevent duplicate keyword arguments
-export type ContainValue = string & { _tacky_id_contain: never };
+export type ContainValue = TackyVariant<"contain">;
 
 type ContainUnaryKeyword = "none" | "strict" | "content";
 

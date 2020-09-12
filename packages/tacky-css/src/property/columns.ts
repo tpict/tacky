@@ -1,7 +1,7 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const columnCount = singleArgProperty("columnCount");
+export const columnCount = knownUnionProperty("columnCount");
 
-export const columnFill = singleArgProperty("columnFill");
+export const columnFill = knownUnionProperty("columnFill");
 
-export const columnSpan = singleArgProperty("columnSpan");
+export const columnSpan = knownUnionProperty("columnSpan");

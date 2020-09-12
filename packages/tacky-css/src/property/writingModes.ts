@@ -1,9 +1,9 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const direction = singleArgProperty("direction");
+export const direction = knownUnionProperty("direction");
 
-export const textCombineUpright = singleArgProperty("textCombineUpright");
+export const textCombineUpright = knownUnionProperty("textCombineUpright");
 
-export const textOrientation = singleArgProperty("textOrientation");
+export const textOrientation = knownUnionProperty("textOrientation");
 
-export const writingMode = singleArgProperty("writingMode");
+export const writingMode = knownUnionProperty("writingMode");

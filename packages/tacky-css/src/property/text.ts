@@ -1,25 +1,37 @@
-import { singleArgProperty } from "../utils";
+import * as CSS from "csstype";
+import { KnownCSSValues } from "../types";
+import { CSSLengthPercentage } from "../unit";
+import { knownUnionProperty, variantProperty } from "../utils";
 
-export const hyphens = singleArgProperty("hyphens");
+export const hyphens = knownUnionProperty("hyphens");
 
-export const letterSpacing = singleArgProperty("letterSpacing");
+export const letterSpacing = variantProperty<
+  "letterSpacing",
+  KnownCSSValues<"letterSpacing">
+>("letterSpacing");
 
-export const lineBreak = singleArgProperty("lineBreak");
+export const lineBreak = knownUnionProperty("lineBreak");
 
-export const overflowWrap = singleArgProperty("overflowWrap");
+export const overflowWrap = knownUnionProperty("overflowWrap");
 
-export const tabSize = singleArgProperty("tabSize");
+export const tabSize = variantProperty<
+  "tabSize",
+  CSS.Properties<never>["tabSize"] | CSSLengthPercentage
+>("tabSize");
 
-export const textAlign = singleArgProperty("textAlign");
+export const textAlign = knownUnionProperty("textAlign");
 
-export const textAlignLast = singleArgProperty("textAlignLast");
+export const textAlignLast = knownUnionProperty("textAlignLast");
 
-export const textJustify = singleArgProperty("textJustify");
+export const textJustify = knownUnionProperty("textJustify");
 
-export const textTransform = singleArgProperty("textTransform");
+export const textTransform = knownUnionProperty("textTransform");
 
-export const whiteSpace = singleArgProperty("whiteSpace");
+export const whiteSpace = knownUnionProperty("whiteSpace");
 
-export const wordBreak = singleArgProperty("wordBreak");
+export const wordBreak = knownUnionProperty("wordBreak");
 
-export const wordSpacing = singleArgProperty("wordSpacing");
+export const wordSpacing = variantProperty<
+  "wordSpacing",
+  KnownCSSValues<"wordSpacing"> | CSSLengthPercentage
+>("wordSpacing");

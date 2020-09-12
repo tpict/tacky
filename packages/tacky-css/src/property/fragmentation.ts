@@ -1,13 +1,13 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const breakAfter = singleArgProperty("breakAfter");
+export const breakAfter = knownUnionProperty("breakAfter");
 
-export const breakBefore = singleArgProperty("breakBefore");
+export const breakBefore = knownUnionProperty("breakBefore");
 
-export const breakInside = singleArgProperty("breakInside");
+export const breakInside = knownUnionProperty("breakInside");
 
-export const boxDecorationBreak = singleArgProperty("boxDecorationBreak");
+export const boxDecorationBreak = knownUnionProperty("boxDecorationBreak");
 
-export const orphans = singleArgProperty("orphans");
+export const orphans = knownUnionProperty("orphans");
 
-export const widows = singleArgProperty("widows");
+export const widows = knownUnionProperty("widows");

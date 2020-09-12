@@ -1,3 +1,3 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const listStylePosition = singleArgProperty("listStylePosition");
+export const listStylePosition = knownUnionProperty("listStylePosition");

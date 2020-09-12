@@ -1,13 +1,9 @@
+import { TackyVariant } from "./types";
 import { CSSLengthPercentage } from "./unit";
 
-export type CSSURL = string & {
-  _tacky_id_url: never;
-};
+export type CSSURL = TackyVariant<"url">;
 export const url = (url: URL): CSSURL => `url(${url})` as CSSURL;
 
-export type FitContent = string & {
-  _tacky_id_fit_content: never;
-};
-
+export type FitContent = TackyVariant<"fitContent">;
 export const fitContent = (arg: CSSLengthPercentage): FitContent =>
   `fitContent(${arg})` as FitContent;

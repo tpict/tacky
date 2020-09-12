@@ -1,3 +1,3 @@
-import { singleArgProperty } from "../utils";
+import { knownUnionProperty } from "../utils";
 
-export const overflowAnchor = singleArgProperty("overflowAnchor");
+export const overflowAnchor = knownUnionProperty("overflowAnchor");

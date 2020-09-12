@@ -1,17 +1,24 @@
-import { singleArgProperty } from "../utils";
+import { CSSLengthPercentage } from "../unit";
+import { knownUnionProperty, variantProperty } from "../utils";
 
-export const bottom = singleArgProperty("bottom");
+export const bottom = variantProperty<"bottom", CSSLengthPercentage | "auto">(
+  "bottom"
+);
 
-export const clear = singleArgProperty("clear");
+export const clear = knownUnionProperty("clear");
 
-export const float = singleArgProperty("float");
+export const float = knownUnionProperty("float");
 
-export const left = singleArgProperty("left");
+export const left = variantProperty<"left", CSSLengthPercentage | "auto">(
+  "left"
+);
 
-export const position = singleArgProperty("position");
+export const position = knownUnionProperty("position");
 
-export const right = singleArgProperty("right");
+export const right = variantProperty<"right", CSSLengthPercentage | "auto">(
+  "right"
+);
 
-export const top = singleArgProperty("top");
+export const top = variantProperty<"top", CSSLengthPercentage | "auto">("top");
 
-export const zIndex = singleArgProperty("zIndex");
+export const zIndex = knownUnionProperty("zIndex");

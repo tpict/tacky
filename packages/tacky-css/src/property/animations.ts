@@ -1,15 +1,24 @@
-import { singleArgProperty } from "../utils";
+import { KnownCSSValues } from "../types";
+import { CSSTime } from "../unit";
+import { knownUnionProperty, variantProperty } from "../utils";
 
-export const animationDelay = singleArgProperty("animationDelay");
+export const animationDelay = variantProperty<
+  "animationDelay",
+  KnownCSSValues<"animationDelay"> | CSSTime
+>("animationDelay");
 
-export const animationDirection = singleArgProperty("animationDirection");
+export const animationDirection = knownUnionProperty("animationDirection");
 
-export const animationDuration = singleArgProperty("animationDuration");
+export const animationDuration = variantProperty<
+  "animationDuration",
+  KnownCSSValues<"animationDuration"> | CSSTime
+>("animationDuration");
 
-export const animationFillMode = singleArgProperty("animationFillMode");
+export const animationFillMode = knownUnionProperty("animationFillMode");
 
-export const animationIterationCount = singleArgProperty(
-  "animationIterationCount"
-);
+export const animationIterationCount = variantProperty<
+  "animationIterationCount",
+  KnownCSSValues<"animationIterationCount"> | CSSTime
+>("animationIterationCount");
 
-export const animationPlayState = singleArgProperty("animationPlayState");
+export const animationPlayState = knownUnionProperty("animationPlayState");

@@ -1,11 +1,16 @@
-import { singleArgProperty } from "../utils";
+import { KnownCSSValues } from "../types";
+import { CSSLengthPercentage } from "../unit";
+import { knownUnionProperty, variantProperty } from "../utils";
 
-export const borderCollapse = singleArgProperty("borderCollapse");
+export const borderCollapse = knownUnionProperty("borderCollapse");
 
-export const captionSide = singleArgProperty("captionSide");
+export const captionSide = knownUnionProperty("captionSide");
 
-export const emptyCells = singleArgProperty("emptyCells");
+export const emptyCells = knownUnionProperty("emptyCells");
 
-export const tableLayout = singleArgProperty("tableLayout");
+export const tableLayout = knownUnionProperty("tableLayout");
 
-export const verticalAlign = singleArgProperty("verticalAlign");
+export const verticalAlign = variantProperty<
+  "verticalAlign",
+  KnownCSSValues<"verticalAlign"> | CSSLengthPercentage
+>("verticalAlign");

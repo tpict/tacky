@@ -1,33 +1,37 @@
 import * as CSS from "csstype";
 import { CSSColor } from "../color";
+import { KnownCSSValues, TypedCSSProperties } from "../types";
 import { CSSLengthPercentage } from "../unit";
-import { singleArgProperty, PropertyTuple } from "../utils";
+import { knownUnionProperty, PropertyTuple, variantProperty } from "../utils";
 
-export const textDecorationColor = singleArgProperty("textDecorationColor");
-
-// TODO: Prevent duplicate keyword arguments
-export type TextDecorationLineValue = string & {
-  _tacky_id_text_decoration_line_value: never;
-};
+export const textDecorationColor = variantProperty<
+  "textDecorationColor",
+  CSSColor
+>("textDecorationColor");
 
 type TextDecorationLineKeyword = "underline" | "overline" | "line-through";
 
+// TODO: Prevent duplicate keyword arguments
 export const textDecorationLineValue = (
   ...args:
     | [keyword: CSS.Globals | "none"]
     | [...lines: [TextDecorationLineKeyword, ...TextDecorationLineKeyword[]]]
 ): PropertyTuple<"textDecorationLine"> =>
-  ["textDecorationLine", args.join(" ") as TextDecorationLineValue] as const;
+  [
+    "textDecorationLine",
+    args.join(" ") as TypedCSSProperties["textDecorationLine"],
+  ] as const;
 
-export const textDecorationSkipInk = singleArgProperty("textDecorationSkipInk");
-
-export const textDecorationStyle = singleArgProperty("textDecorationStyle");
-
-export const textDecorationThickness = singleArgProperty(
-  "textDecorationThickness"
+export const textDecorationSkipInk = knownUnionProperty(
+  "textDecorationSkipInk"
 );
 
-export type TextShadowValue = string & { _tacky_id_text_shadow: never };
+export const textDecorationStyle = knownUnionProperty("textDecorationStyle");
+
+export const textDecorationThickness = variantProperty<
+  "textDecorationThickness",
+  KnownCSSValues<"textDecorationThickness"> | CSSLengthPercentage
+>("textDecorationThickness");
 
 type TextShadowArgs =
   | [offsetX: CSSLengthPercentage, offsetY: CSSLengthPercentage]
@@ -59,5 +63,5 @@ export const textShadow: TextShadow = (
   "textShadow",
   (Array.isArray(args[0])
     ? args.map(shadow => (shadow as string[]).join(" ")).join("; ")
-    : args.join(" ")) as TextShadowValue,
+    : args.join(" ")) as TypedCSSProperties["textShadow"],
 ];

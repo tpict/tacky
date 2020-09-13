@@ -3,52 +3,76 @@ import { KnownCSSValues, TypedCSSProperties } from "../types";
 import { CSSLengthPercentage } from "../unit";
 import {
   knownUnionProperty,
-  variantProperty,
   PropertyTuple,
   FourDimensionalArgs,
 } from "../utils";
 
-export const height = variantProperty<
+export const height = <T extends string>(
+  height: KnownCSSValues<"height"> | CSSLengthPercentage<T> | FitContent
+): PropertyTuple<"height"> => [
   "height",
-  KnownCSSValues<"height"> | CSSLengthPercentage | FitContent
->("height");
+  height.toString() as TypedCSSProperties["height"],
+];
 
 // TODO: This is missing from the MDN page on Box Model module
-export const margin = (...args: FourDimensionalArgs) =>
+export const margin = <T extends string>(...args: FourDimensionalArgs<T>) =>
   ["margin", args.join(" ") as TypedCSSProperties["margin"]] as const;
 
-export const marginBottom = variantProperty<
+export const marginBottom = <T extends string>(
+  marginBottom: CSSLengthPercentage<T>
+): PropertyTuple<"marginBottom"> => [
   "marginBottom",
-  CSSLengthPercentage
->("marginBottom");
+  marginBottom.toString() as TypedCSSProperties["marginBottom"],
+];
 
-export const marginLeft = variantProperty<"marginLeft", CSSLengthPercentage>(
-  "marginLeft"
-);
+export const marginLeft = <T extends string>(
+  marginLeft: CSSLengthPercentage<T>
+): PropertyTuple<"marginLeft"> => [
+  "marginLeft",
+  marginLeft.toString() as TypedCSSProperties["marginLeft"],
+];
 
-export const marginRight = variantProperty<"marginRight", CSSLengthPercentage>(
-  "marginRight"
-);
+export const marginRight = <T extends string>(
+  marginRight: CSSLengthPercentage<T>
+): PropertyTuple<"marginRight"> => [
+  "marginRight",
+  marginRight.toString() as TypedCSSProperties["marginRight"],
+];
 
-export const marginTop = variantProperty<"marginTop", CSSLengthPercentage>(
-  "marginTop"
-);
+export const marginTop = <T extends string>(
+  marginTop: CSSLengthPercentage<T>
+): PropertyTuple<"marginTop"> => [
+  "marginTop",
+  marginTop.toString() as TypedCSSProperties["marginTop"],
+];
 
-export const minHeight = variantProperty<"minHeight", CSSLengthPercentage>(
-  "minHeight"
-);
+export const minHeight = <T extends string>(
+  minHeight: CSSLengthPercentage<T>
+): PropertyTuple<"minHeight"> => [
+  "minHeight",
+  minHeight.toString() as TypedCSSProperties["minHeight"],
+];
 
-export const minWidth = variantProperty<"minWidth", CSSLengthPercentage>(
-  "minWidth"
-);
+export const minWidth = <T extends string>(
+  minWidth: CSSLengthPercentage<T>
+): PropertyTuple<"minWidth"> => [
+  "minWidth",
+  minWidth.toString() as TypedCSSProperties["minWidth"],
+];
 
-export const maxHeight = variantProperty<"maxHeight", CSSLengthPercentage>(
-  "maxHeight"
-);
+export const maxHeight = <T extends string>(
+  maxHeight: CSSLengthPercentage<T>
+): PropertyTuple<"maxHeight"> => [
+  "maxHeight",
+  maxHeight.toString() as TypedCSSProperties["maxHeight"],
+];
 
-export const maxWidth = variantProperty<"maxWidth", CSSLengthPercentage>(
-  "maxWidth"
-);
+export const maxWidth = <T extends string>(
+  maxWidth: CSSLengthPercentage<T>
+): PropertyTuple<"maxWidth"> => [
+  "maxWidth",
+  maxWidth.toString() as TypedCSSProperties["maxWidth"],
+];
 
 export const overscrollBehaviorBlock = knownUnionProperty(
   "overscrollBehaviorBlock"
@@ -62,34 +86,42 @@ export const overscrollBehaviorX = knownUnionProperty("overscrollBehaviorX");
 
 export const overscrollBehaviorY = knownUnionProperty("overscrollBehaviorY");
 
-export const padding = (
-  ...args: FourDimensionalArgs
-): PropertyTuple<"padding"> =>
+export const padding = <T extends string>(...args: FourDimensionalArgs<T>) =>
   ["padding", args.join(" ") as TypedCSSProperties["padding"]] as const;
 
-export const paddingBottom = variantProperty<
+export const paddingBottom = <T extends string>(
+  paddingBottom: CSSLengthPercentage<T>
+): PropertyTuple<"paddingBottom"> => [
   "paddingBottom",
-  CSSLengthPercentage
->("paddingBottom");
+  paddingBottom.toString() as TypedCSSProperties["paddingBottom"],
+];
 
-export const paddingLeft = variantProperty<"paddingLeft", CSSLengthPercentage>(
-  "paddingLeft"
-);
+export const paddingLeft = <T extends string>(
+  paddingLeft: CSSLengthPercentage<T>
+): PropertyTuple<"paddingLeft"> => [
+  "paddingLeft",
+  paddingLeft.toString() as TypedCSSProperties["paddingLeft"],
+];
 
-export const paddingRight = variantProperty<
+export const paddingRight = <T extends string>(
+  paddingRight: CSSLengthPercentage<T>
+): PropertyTuple<"paddingRight"> => [
   "paddingRight",
-  CSSLengthPercentage
->("paddingRight");
+  paddingRight.toString() as TypedCSSProperties["paddingRight"],
+];
 
-export const paddingTop = variantProperty<"paddingTop", CSSLengthPercentage>(
-  "paddingTop"
-);
+export const paddingTop = <T extends string>(
+  paddingTop: CSSLengthPercentage<T>
+): PropertyTuple<"paddingTop"> => [
+  "paddingTop",
+  paddingTop.toString() as TypedCSSProperties["paddingTop"],
+];
 
-export const visibility = variantProperty<"visibility", CSSLengthPercentage>(
-  "visibility"
-);
+export const visibility = knownUnionProperty<"visibility">("visibility");
 
-export const width = variantProperty<
+export const width = <T extends string>(
+  width: KnownCSSValues<"width"> | CSSLengthPercentage<T> | FitContent
+): PropertyTuple<"width"> => [
   "width",
-  KnownCSSValues<"width"> | CSSLengthPercentage | FitContent
->("width");
+  width.toString() as TypedCSSProperties["width"],
+];

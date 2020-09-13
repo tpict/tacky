@@ -13,13 +13,13 @@ const Example: React.FC = () => {
     _.color(_.rgb(255, 0, 0)),
     _.fontSize(_.rem(test)),
     _.fontFamily("Helvetica"),
-    _.marginTop(_.rem(5)),
-    _.marginBottom(_.rem(5)),
+    _.marginTop("5rem"),
+    _.marginBottom("5rem"),
     _.backgroundColor(_.rgb(0, 0, 128)),
     _.display(display),
-    _.boxShadow(_.rem(2), _.rem(2), _.rem(2), _.rem(2), _.rgba(0, 0, 0, 0.5)),
+    _.boxShadow("2rem", "2rem", "2rem", "2rem", _.rgba(0, 0, 0, 0.5)),
     _.media(
-      ["not", _.media.screen(_.media.minWidth(_.px(300)))],
+      ["not", _.media.screen(_.media.minWidth("300px"))],
       _.color(_.rgb(0, 255, 0))
     ),
   ]);

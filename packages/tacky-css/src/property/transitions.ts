@@ -4,16 +4,16 @@ import { PropertyTuple } from "../utils";
 import { CSSTime } from "../unit";
 import { TypedCSSProperties } from "../types";
 
-export const transitionDelay = (
-  ...args: [keyword: CSS.Globals] | [...delay: [CSSTime, ...CSSTime[]]]
+export const transitionDelay = <T extends string>(
+  ...args: [keyword: CSS.Globals] | [...delay: [CSSTime<T>, ...CSSTime<T>[]]]
 ): PropertyTuple<"transitionDelay"> =>
   [
     "transitionDelay",
     args.join(", ") as TypedCSSProperties["transitionDelay"],
   ] as const;
 
-export const transitionDuration = (
-  ...args: [keyword: CSS.Globals] | [...duration: [CSSTime, ...CSSTime[]]]
+export const transitionDuration = <T extends string>(
+  ...args: [keyword: CSS.Globals] | [...duration: [CSSTime<T>, ...CSSTime<T>[]]]
 ): PropertyTuple<"transitionDuration"> =>
   [
     "transitionDuration",

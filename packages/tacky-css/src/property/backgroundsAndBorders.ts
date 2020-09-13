@@ -2,13 +2,12 @@ import * as CSS from "csstype";
 import { CSSColor } from "../color";
 import { CSSImage } from "../image";
 import { KnownCSSValues, TypedCSSProperties } from "../types";
-import { CSSLength, CSSLengthPercentage, Percent } from "../unit";
+import { CSSLength, CSSLengthPercentage, CSSPercentage } from "../unit";
 import {
   knownUnionProperty,
   variantProperty,
   PropertyTuple,
   FourDimensionalArgs,
-  FourDimensionalProperty,
 } from "../utils";
 
 type BackgroundAttachmentKeyword = Exclude<
@@ -89,25 +88,30 @@ export const backgroundOrigin: BackgroundOrigin = (...origin: unknown[]) =>
 
 type BackgroundPositionKeyword = "top" | "left" | "bottom" | "right" | "center";
 
-export type BackgroundPositionArgs =
+export type BackgroundPositionArgs<T extends string> =
   | [all: BackgroundPositionKeyword]
-  | [left: CSSLengthPercentage]
-  | [x: "left" | "right", y: "top" | "bottom" | CSSLengthPercentage]
-  | [y: "top" | "bottom", x: "left" | "right" | CSSLengthPercentage]
-  | [x: CSSLengthPercentage, y: CSSLengthPercentage]
+  | [left: CSSLengthPercentage<T>]
+  | [x: "left" | "right", y: "top" | "bottom" | CSSLengthPercentage<T>]
+  | [y: "top" | "bottom", x: "left" | "right" | CSSLengthPercentage<T>]
+  | [x: CSSLengthPercentage<T>, y: CSSLengthPercentage<T>]
   | [
       x: "left" | "right",
-      xOffset: CSSLengthPercentage,
+      xOffset: CSSLengthPercentage<T>,
       y: "top" | "bottom",
-      yOffset: CSSLengthPercentage
+      yOffset: CSSLengthPercentage<T>
     ];
 
-export const backgroundPosition = (
-  ...args:
-    | [global: CSS.Globals]
-    | BackgroundPositionArgs
-    | [BackgroundPositionArgs, ...BackgroundPositionArgs[]]
-): PropertyTuple<"backgroundPosition"> =>
+export interface BackgroundPosition {
+  (global: CSS.Globals): PropertyTuple<"backgroundPosition">;
+  <T extends string>(...args: BackgroundPositionArgs<T>): PropertyTuple<
+    "backgroundPosition"
+  >;
+  <T extends string>(...args: BackgroundPositionArgs<T>[]): PropertyTuple<
+    "backgroundPosition"
+  >;
+}
+
+export const backgroundPosition: BackgroundPosition = (...args: unknown[]) =>
   [
     "backgroundPosition",
     (Array.isArray(args[0])
@@ -138,14 +142,25 @@ export const backgroundRepeat = (
 
 type BackgroundSizeKeyword = "cover" | "contain";
 
-type BackgroundSizeArgs =
-  | [keyword: CSS.Globals | BackgroundSizeKeyword]
-  | [width: CSSLengthPercentage | "auto"]
-  | [width: CSSLengthPercentage | "auto", height: CSSLengthPercentage | "auto"];
+type BackgroundSizeArgs<T extends string> =
+  | [keyword: BackgroundSizeKeyword]
+  | [width: CSSLengthPercentage<T> | "auto"]
+  | [
+      width: CSSLengthPercentage<T> | "auto",
+      height: CSSLengthPercentage<T> | "auto"
+    ];
 
-export const backgroundSize = (
-  ...args: BackgroundSizeArgs | [BackgroundSizeArgs, ...BackgroundSizeArgs[]]
-): PropertyTuple<"backgroundSize"> =>
+export interface BackgroundSize {
+  (global: CSS.Globals): PropertyTuple<"backgroundSize">;
+  <T extends string>(...args: BackgroundSizeArgs<T>): PropertyTuple<
+    "backgroundSize"
+  >;
+  <T extends string>(...args: BackgroundSizeArgs<T>[]): PropertyTuple<
+    "backgroundSize"
+  >;
+}
+
+export const backgroundSize: BackgroundSize = (...args: unknown[]) =>
   [
     "backgroundSize",
     (Array.isArray(args[0])
@@ -155,15 +170,18 @@ export const backgroundSize = (
 
 type BorderStyle = TypedCSSProperties["borderTopStyle"];
 
-export interface Border<T extends keyof TypedCSSProperties> {
-  (style: BorderStyle): PropertyTuple<T>;
-  (style: BorderStyle, color: CSSColor): PropertyTuple<T>;
-  (width: CSSLengthPercentage, style: BorderStyle): PropertyTuple<T>;
-  (
-    width: CSSLengthPercentage,
+export interface Border<R extends keyof TypedCSSProperties> {
+  (style: BorderStyle): PropertyTuple<R>;
+  (style: BorderStyle, color: CSSColor): PropertyTuple<R>;
+  <T extends string>(
+    width: CSSLengthPercentage<T>,
+    style: BorderStyle
+  ): PropertyTuple<R>;
+  <T extends string>(
+    width: CSSLengthPercentage<T>,
     style: BorderStyle,
     color: CSSColor
-  ): PropertyTuple<T>;
+  ): PropertyTuple<R>;
 }
 
 export const border: Border<"border"> = (...args: unknown[]) =>
@@ -180,31 +198,39 @@ export const borderBottomColor = variantProperty<
   CSSColor | "none"
 >("borderBottomColor");
 
-export const borderBottomLeftRadius = variantProperty<
-  "borderBottomLeftRadius",
-  CSSLengthPercentage
->("borderBottomLeftRadius");
+export const borderBottomLeftRadius = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderBottomLeftRadius"> =>
+  [
+    "borderBottomLeftRadius",
+    width as TypedCSSProperties["borderBottomLeftRadius"],
+  ] as const;
 
-export const borderBottomRightRadius = variantProperty<
-  "borderBottomRightRadius",
-  CSSLengthPercentage
->("borderBottomRightRadius");
+export const borderBottomRightRadius = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderBottomRightRadius"> =>
+  [
+    "borderBottomRightRadius",
+    width as TypedCSSProperties["borderBottomRightRadius"],
+  ] as const;
 
 export const borderBottomStyle = knownUnionProperty("borderBottomStyle");
 
-export const borderBottomWidth = variantProperty<
-  "borderBottomWidth",
-  CSSLengthPercentage
->("borderBottomWidth");
+export const borderBottomWidth = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderBottomWidth"> =>
+  [
+    "borderBottomWidth",
+    width as TypedCSSProperties["borderBottomWidth"],
+  ] as const;
 
 export const borderColor = variantProperty<"borderColor", CSSColor>(
   "borderColor"
 );
 
-export const borderImageOutset: FourDimensionalProperty<
-  PropertyTuple<"borderImageOutset">,
-  CSSLength | number
-> = (...args: unknown[]) =>
+export const borderImageOutset = <T extends string>(
+  ...args: FourDimensionalArgs<CSSLength<T>>
+) =>
   [
     "borderImageOutset",
     args.join(" ") as TypedCSSProperties["borderImageOutset"],
@@ -228,19 +254,26 @@ export const borderImageRepeat = (
   ] as const;
 
 // TODO: Allow "fill" keyword at any position
-export type BorderImageSliceArgs =
-  | [all: number | Percent, fill?: "fill"]
-  | [vertical: number | Percent, horizontal: number | Percent, fill?: "fill"]
-  | [
-      top: number | Percent,
-      horizontal: number | Percent,
-      bottom: number | Percent,
-      fill?: "fill"
-    ];
+export interface BorderImageSlice {
+  (global: CSS.Globals): PropertyTuple<"borderImageSlice">;
+  <T extends string>(
+    all: number | CSSPercentage<T>,
+    fill?: "fill"
+  ): PropertyTuple<"borderImageSlice">;
+  <T extends string>(
+    vertical: number | CSSPercentage<T>,
+    horizontal: number | CSSPercentage<T>,
+    fill?: "fill"
+  ): PropertyTuple<"borderImageSlice">;
+  <T extends string>(
+    top: number | CSSPercentage<T>,
+    horizontal: number | CSSPercentage<T>,
+    bottom: number | CSSPercentage<T>,
+    fill?: "fill"
+  ): PropertyTuple<"borderImageSlice">;
+}
 
-export const borderImageSlice = (
-  ...args: [global: CSS.Globals] | BorderImageSliceArgs
-): PropertyTuple<"borderImageSlice"> =>
+export const borderImageSlice: BorderImageSlice = (...args: unknown[]) =>
   [
     "borderImageSlice",
     args.join(" ") as TypedCSSProperties["borderImageSlice"],
@@ -251,9 +284,9 @@ export const borderImageSource = variantProperty<
   KnownCSSValues<"borderImageSource"> | CSSImage
 >("borderImageSource");
 
-export const borderImageWidth = (
-  ...args: FourDimensionalArgs
-): PropertyTuple<"borderImageWidth"> =>
+export const borderImageWidth = <T extends string>(
+  ...args: FourDimensionalArgs<CSSLengthPercentage<T>>
+) =>
   [
     "borderImageWidth",
     args.join(" ") as TypedCSSProperties["borderImageWidth"],
@@ -269,37 +302,37 @@ export const borderLeftColor = variantProperty<
 
 export const borderLeftStyle = knownUnionProperty("borderLeftStyle");
 
-export const borderLeftWidth = variantProperty<
-  "borderLeftWidth",
-  CSSLengthPercentage
->("borderLeftWidth");
+export const borderLeftWidth = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderLeftWidth"> =>
+  ["borderLeftWidth", width as TypedCSSProperties["borderLeftWidth"]] as const;
 
-type BorderRadiusCorners =
-  | [all: CSSLengthPercentage]
+type BorderRadiusCorners<T extends string> =
+  | [all: CSSLengthPercentage<T>]
   | [
-      topLeftAndBottomRight: CSSLengthPercentage,
-      topRightAndBottomLeft: CSSLengthPercentage
+      topLeftAndBottomRight: CSSLengthPercentage<T>,
+      topRightAndBottomLeft: CSSLengthPercentage<T>
     ]
   | [
-      topLeft: CSSLengthPercentage,
-      topRightAndBottomLeft: CSSLengthPercentage,
-      bottomRight: CSSLengthPercentage
+      topLeft: CSSLengthPercentage<T>,
+      topRightAndBottomLeft: CSSLengthPercentage<T>,
+      bottomRight: CSSLengthPercentage<T>
     ]
   | [
-      topLeft: CSSLengthPercentage,
-      topRight: CSSLengthPercentage,
-      bottomRight: CSSLengthPercentage,
-      bottomLeft: CSSLengthPercentage
+      topLeft: CSSLengthPercentage<T>,
+      topRight: CSSLengthPercentage<T>,
+      bottomRight: CSSLengthPercentage<T>,
+      bottomLeft: CSSLengthPercentage<T>
     ];
 
-export type BorderRadiusEllipticalCorners = [
-  ...BorderRadiusCorners,
-  ...([] | ["/", ...BorderRadiusCorners])
+export type BorderRadiusEllipticalCorners<T extends string> = [
+  ...BorderRadiusCorners<T>,
+  ...([] | ["/", ...BorderRadiusCorners<T>])
 ];
 
-export interface BorderRadius<T> {
-  (global: CSS.Globals): T;
-  (...args: BorderRadiusEllipticalCorners): T;
+export interface BorderRadius<R> {
+  (global: CSS.Globals): R;
+  <T extends string>(...args: BorderRadiusEllipticalCorners<T>): R;
 }
 
 export const borderRadius: BorderRadius<PropertyTuple<"borderRadius">> = (
@@ -320,10 +353,13 @@ export const borderRightColor = variantProperty<
 
 export const borderRightStyle = knownUnionProperty("borderRightStyle");
 
-export const borderRightWidth = variantProperty<
-  "borderRightWidth",
-  CSSLengthPercentage
->("borderRightWidth");
+export const borderRightWidth = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderRightWidth"> =>
+  [
+    "borderRightWidth",
+    width as TypedCSSProperties["borderRightWidth"],
+  ] as const;
 
 export const borderStyle = knownUnionProperty("borderStyle");
 
@@ -335,73 +371,75 @@ export const borderTopColor = variantProperty<
   CSSColor | "none"
 >("borderTopColor");
 
-export const borderTopLeftRadius = variantProperty<
-  "borderTopLeftRadius",
-  CSSLengthPercentage
->("borderTopLeftRadius");
+export const borderTopLeftRadius = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderTopLeftRadius"> =>
+  [
+    "borderTopLeftRadius",
+    width as TypedCSSProperties["borderTopLeftRadius"],
+  ] as const;
 
-export const borderTopRightRadius = variantProperty<
-  "borderTopRightRadius",
-  CSSLengthPercentage
->("borderTopRightRadius");
+export const borderTopRightRadius = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderTopRightRadius"> =>
+  [
+    "borderTopRightRadius",
+    width as TypedCSSProperties["borderTopRightRadius"],
+  ] as const;
 
 export const borderTopStyle = knownUnionProperty("borderTopStyle");
 
-export const borderTopWidth = variantProperty<
-  "borderTopWidth",
-  CSSLengthPercentage
->("borderTopWidth");
+export const borderTopWidth = <T extends string>(
+  width: CSSLengthPercentage<T>
+): PropertyTuple<"borderTopWidth"> =>
+  ["borderTopWidth", width as TypedCSSProperties["borderTopWidth"]] as const;
 
-export const borderWidth = (
-  ...args: FourDimensionalArgs
-): PropertyTuple<"borderWidth"> =>
+export const borderWidth = <T extends string>(
+  ...args: FourDimensionalArgs<CSSLengthPercentage<T>>
+) =>
   ["borderWidth", args.join(" ") as TypedCSSProperties["borderWidth"]] as const;
 
 export interface BoxShadow {
-  (
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
-    spreadLength: CSSLengthPercentage,
+  <T extends string>(
+    offsetX: CSSLengthPercentage<T>,
+    offsetY: CSSLengthPercentage<T>,
+    blurRadius: CSSLengthPercentage<T>,
+    spreadLength: CSSLengthPercentage<T>,
     color?: CSSColor
   ): PropertyTuple<"boxShadow">;
-  (
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
+  <T extends string>(
+    offsetX: CSSLengthPercentage<T>,
+    offsetY: CSSLengthPercentage<T>,
+    blurRadius: CSSLengthPercentage<T>,
     color?: CSSColor
   ): PropertyTuple<"boxShadow">;
-  (
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
+  <T extends string>(
+    offsetX: CSSLengthPercentage<T>,
+    offsetY: CSSLengthPercentage<T>,
     color?: CSSColor
   ): PropertyTuple<"boxShadow">;
-  (
+  <T extends string>(
     inset: "inset",
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
-    spreadLength: CSSLengthPercentage,
+    offsetX: CSSLengthPercentage<T>,
+    offsetY: CSSLengthPercentage<T>,
+    blurRadius: CSSLengthPercentage<T>,
+    spreadLength: CSSLengthPercentage<T>,
     color?: CSSColor
   ): PropertyTuple<"boxShadow">;
-  (
+  <T extends string>(
     inset: "inset",
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
+    offsetX: CSSLengthPercentage<T>,
+    offsetY: CSSLengthPercentage<T>,
+    blurRadius: CSSLengthPercentage<T>,
     color?: CSSColor
   ): PropertyTuple<"boxShadow">;
-  (
+  <T extends string>(
     inset: "inset",
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
+    offsetX: CSSLengthPercentage<T>,
+    offsetY: CSSLengthPercentage<T>,
     color?: CSSColor
   ): PropertyTuple<"boxShadow">;
 }
 
-export const boxShadow: BoxShadow = (
-  ...args: unknown[]
-): PropertyTuple<"boxShadow"> => [
-  "boxShadow",
-  args.join(" ") as TypedCSSProperties["boxShadow"],
-];
+export const boxShadow: BoxShadow = (...args: unknown[]) =>
+  ["boxShadow", args.join(" ") as TypedCSSProperties["boxShadow"]] as const;

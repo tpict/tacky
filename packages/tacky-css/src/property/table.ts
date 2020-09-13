@@ -1,6 +1,6 @@
-import { KnownCSSValues } from "../types";
+import { TypedCSSProperties, KnownCSSValues } from "../types";
 import { CSSLengthPercentage } from "../unit";
-import { knownUnionProperty, variantProperty } from "../utils";
+import { knownUnionProperty, PropertyTuple } from "../utils";
 
 export const borderCollapse = knownUnionProperty("borderCollapse");
 
@@ -10,7 +10,10 @@ export const emptyCells = knownUnionProperty("emptyCells");
 
 export const tableLayout = knownUnionProperty("tableLayout");
 
-export const verticalAlign = variantProperty<
-  "verticalAlign",
-  KnownCSSValues<"verticalAlign"> | CSSLengthPercentage
->("verticalAlign");
+export const verticalAlign = <T extends string>(
+  alignment: KnownCSSValues<"verticalAlign"> | CSSLengthPercentage<T>
+): PropertyTuple<"verticalAlign"> =>
+  [
+    "verticalAlign",
+    alignment.toString() as TypedCSSProperties["verticalAlign"],
+  ] as const;

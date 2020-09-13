@@ -1,25 +1,18 @@
 import { TackyVariant } from "./types";
+import { MatchDecimal } from "./utils";
 
 // Length
-export type Rem = TackyVariant<"rem">;
-export const rem = (magnitude: number): Rem => `${magnitude}rem` as Rem;
+export const rem = <T extends number>(magnitude: T): `${T}rem` => `${magnitude}rem` as `${T}rem`;
 
-export type Em = TackyVariant<"em">;
-export const em = (magnitude: number): Em => `${magnitude}em` as Em;
+export const em = <T extends number>(magnitude: T): `${T}em` => `${magnitude}em` as `${T}em`;
 
-export type Px = TackyVariant<"px">;
-export const px = (magnitude: number): Px => `${magnitude}px` as Px;
+export const px = <T extends number>(magnitude: T): `${T}px` => `${magnitude}px` as `${T}px`;
 
-export type Percent = TackyVariant<"percent">;
-export const percent = (magnitude: number): Percent =>
-  `${magnitude}%` as Percent;
+export const percent = <T extends number>(magnitude: T): `${T}%` => `${magnitude}%` as `${T}%`;
 
 // Time
-export type Ms = TackyVariant<"ms">;
-export const ms = (magnitude: number): Ms => `${magnitude}ms` as Ms;
-
-export type S = TackyVariant<"s">;
-export const s = (magnitude: number): S => `${magnitude}s` as S;
+export const ms = <T extends number>(magnitude: T): `${T}ms` => `${magnitude}ms` as `${T}ms`;
+export const s = <T extends number>(magnitude: T): `${T}s` => `${magnitude}s` as `${T}s`;
 
 // Angle
 export type Deg = TackyVariant<"deg">;
@@ -44,8 +37,9 @@ export const dpcm = (magnitude: number): Dpi => `${magnitude}dpi` as Dpi;
 export type Dppx = TackyVariant<"dppx">;
 export const dppx = (magnitude: number): Dpi => `${magnitude}dpi` as Dpi;
 
-export type CSSLength = Rem | Em | Px | 0;
-export type CSSLengthPercentage = CSSLength | Percent;
-export type CSSTime = Ms | S | 0;
+export type CSSLength<T extends string> = MatchDecimal<T, "rem" | "em" | "px"> | 0;
+export type CSSPercentage<T extends string> = MatchDecimal<T, "%"> | 0;
+export type CSSLengthPercentage<T extends string> = CSSLength<T> | CSSPercentage<T>;
+export type CSSTime<T extends string> = MatchDecimal<T, "ms" | "s"> | 0;
 export type CSSAngle = Deg | Rad | Grad | Turn;
-export type CSSResolution = Dpi | Dpcm | Dppx;
+export type CSSResolution<T extends string> = MatchDecimal<T, "dpi" | "dpcm" | "dppx"> | 0;

@@ -5,5 +5,6 @@ export type CSSURL = TackyVariant<"url">;
 export const url = (url: URL): CSSURL => `url(${url})` as CSSURL;
 
 export type FitContent = TackyVariant<"fitContent">;
-export const fitContent = (arg: CSSLengthPercentage): FitContent =>
-  `fitContent(${arg})` as FitContent;
+export const fitContent = <T extends string>(
+  arg: CSSLengthPercentage<T>
+): FitContent => `fitContent(${arg})` as FitContent;

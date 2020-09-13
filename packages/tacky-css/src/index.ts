@@ -24,7 +24,7 @@ type TackyArg = typeof tackyArg;
 
 export const compile = (styles: TypedCSSArray): CSSObject =>
   styles.reduce((acc, [key, value]) => {
-    // Investigate TS2590 without this cast
+    // TODO: Investigate TS2590 without this cast
     acc[key as string] = Array.isArray(value) ? compile(value) : value;
     return acc;
   }, {} as CSSObject);

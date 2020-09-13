@@ -14,8 +14,8 @@ const styles = tacky(_ => [
   _.fontSize(_.rem(fontSize)),
   _.fontFamily("Times New Roman", "serif"),
   _.display(display),
-  _.boxShadow(_.rem(2), _.rem(2), _.rem(2), _.rem(2), _.rgba(0, 0, 0, 0.5)),
-  _.media([_.media.screen(_.media.minWidth(_.rem(30)))],
+  _.boxShadow("2rem", "2rem", "2rem", "2rem", _.rgba(0, 0, 0, 0.5)),
+  _.media([_.media.screen(_.media.minWidth("300px"))],
     _.color(_.rgb(0, 255, 0)),
   ),
 ]);
@@ -71,17 +71,6 @@ Tacky is a library inspired by
 [elm-css](https://github.com/rtfeldman/elm-css) that takes a functional
 approach in order to provide safety that can't be guaranteed by a `Record`
 interface alone.
-
-### Why are values specified unit-first?
-
-Standard object styles allow any string where scalar CSS values e.g. `"2rem"`,
-`"5px"` are expected. It's not feasible to enumerate every possibility
-of those values, and TypeScript's type system has no ability to interpolate
-strings.
-
-By expressing these as a "unit function" that receives magnitude as a
-number, we can be much more strict about what values are allowed for a given
-property.
 
 ### Why write styles as a list of function calls?
 

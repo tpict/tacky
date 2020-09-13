@@ -1,6 +1,6 @@
 import { BackgroundPositionArgs } from "./property";
 import { CSSColor } from "./color";
-import { CSSLengthPercentage, Percent, CSSAngle } from "./unit";
+import { CSSLengthPercentage, CSSPercentage, CSSAngle } from "./unit";
 import { TackyVariant } from "./types";
 import { CSSURL } from "./function";
 
@@ -18,15 +18,17 @@ type SideOrCorner =
   | "to right top"
   | "to right bottom";
 
-type InitialLinearColorStop = [
+type InitialLinearColorStop<T extends string> = [
   color: CSSColor,
-  stopStart?: CSSLengthPercentage,
-  stopEnd?: CSSLengthPercentage
+  stopStart?: CSSLengthPercentage<T>,
+  stopEnd?: CSSLengthPercentage<T>
 ];
 
-type LinearColorStop = InitialLinearColorStop;
-type ColorHint = Percent;
-type LinearColorStopOrHint = LinearColorStop | [ColorHint, ...LinearColorStop];
+type LinearColorStop<T extends string> = InitialLinearColorStop<T>;
+type ColorHint<T extends string> = CSSPercentage<T>;
+type LinearColorStopOrHint<T extends string> =
+  | LinearColorStop<T>
+  | [ColorHint<T>, ...LinearColorStop<T>];
 
 // Ideally <color-hint> would be expressed in a way that matches the CSS syntax
 // more closely, i.e.
@@ -58,11 +60,12 @@ type LinearColorStopOrHint = LinearColorStop | [ColorHint, ...LinearColorStop];
 export interface LinearGradientFunction<Return> {
   <
     T extends [CSSAngle | SideOrCorner] | [],
-    V extends [LinearColorStopOrHint, ...LinearColorStopOrHint[]]
+    U extends string,
+    V extends [LinearColorStopOrHint<U>, ...LinearColorStopOrHint<U>[]]
   >(
     ...args: [
       ...angle: T,
-      colorStop: InitialLinearColorStop,
+      colorStop: InitialLinearColorStop<U>,
       ...colorStopOrHint: V
     ]
   ): Return;
@@ -95,17 +98,18 @@ type RadialGradientExtentKeyword =
   | "farthest-corner";
 export interface RadialGradientFunction<Return> {
   <
+    U extends string,
     T extends
       | [
           RadialGradientShape | RadialGradientExtentKeyword,
-          ...([] | ["at", ...BackgroundPositionArgs])
+          ...([] | ["at", ...BackgroundPositionArgs<U>])
         ]
       | [],
-    V extends [LinearColorStopOrHint, ...LinearColorStopOrHint[]]
+    V extends [LinearColorStopOrHint<U>, ...LinearColorStopOrHint<U>[]]
   >(
     ...args: [
       ...shape: T,
-      colorStop: InitialLinearColorStop,
+      colorStop: InitialLinearColorStop<U>,
       ...colorStopOrHint: V
     ]
   ): Return;

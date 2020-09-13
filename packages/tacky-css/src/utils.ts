@@ -1,6 +1,5 @@
 import * as CSS from "csstype";
 import { TypedCSSProperties } from "./types";
-import { CSSLengthPercentage } from "./unit";
 
 export type PropertyTuple<T extends keyof TypedCSSProperties> = readonly [
   T,
@@ -26,21 +25,29 @@ export const variantProperty = <
   // TODO: Investigate TS2590 without this cast
   ([property, value] as unknown) as [T, TypedCSSProperties[T]];
 
-export interface FourDimensionalProperty<ReturnType, ValueType> {
-  (global: CSS.Globals): ReturnType;
-  (all: ValueType): ReturnType;
-  (vertical: ValueType, horizontal: ValueType): ReturnType;
-  (top: ValueType, right: ValueType, bottom: ValueType): ReturnType;
-  (
-    top: ValueType,
-    right: ValueType,
-    bottom: ValueType,
-    left: ValueType
-  ): ReturnType;
-}
-
-export type FourDimensionalArgs<Value = CSSLengthPercentage> =
+export type FourDimensionalArgs<Value> =
   | [all: Value]
   | [vertical: Value, horizontal: Value]
   | [top: Value, right: Value, bottom: Value]
   | [top: Value, right: Value, bottom: Value, left: Value];
+
+type Digits = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+
+
+type MatchInteger<S extends string, Units extends string, T = S> = S extends Units
+? T
+: S extends `${infer U}${infer W}`
+? U extends Digits ? W extends "" ? never : MatchInteger<W, Units, T>
+: never
+: never;
+
+
+type MatchPositiveDecimal<S extends string, Units extends string, T = S> = S extends `${infer U}.${infer V}`
+? V extends Units ? never
+: MatchInteger<`${U}${V}`, Units, T>  : MatchInteger<S, Units, T>;
+
+export type MatchDecimal<S extends string, Units extends string> = S extends ({[P in S]: P extends Units
+? never
+: P extends `${"-" | ""}${infer U}`
+? MatchPositiveDecimal<U, Units, P> : never
+}[S]) ? S : never;

@@ -1,7 +1,7 @@
 import { CSSColor } from "../color";
-import { KnownCSSValues } from "../types";
+import { KnownCSSValues, TypedCSSProperties } from "../types";
 import { CSSLength } from "../unit";
-import { knownUnionProperty, variantProperty } from "../utils";
+import { knownUnionProperty, PropertyTuple, variantProperty } from "../utils";
 
 export const boxSizing = knownUnionProperty("boxSizing");
 
@@ -17,10 +17,13 @@ export const outlineColor = variantProperty<"outlineColor", CSSColor>(
 
 export const outlineStyle = knownUnionProperty("outlineStyle");
 
-export const outlineWidth = variantProperty<
-  "outlineWidth",
-  KnownCSSValues<"outlineWidth"> | CSSLength
->("outlineWidth");
+export const outlineWidth = <T extends string>(
+  width: KnownCSSValues<"outlineWidth"> | CSSLength<T>
+): PropertyTuple<"outlineWidth"> =>
+  [
+    "outlineWidth",
+    width.toString() as TypedCSSProperties["outlineWidth"],
+  ] as const;
 
 export const resize = knownUnionProperty("resize");
 

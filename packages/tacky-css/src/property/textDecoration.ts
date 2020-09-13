@@ -28,33 +28,39 @@ export const textDecorationSkipInk = knownUnionProperty(
 
 export const textDecorationStyle = knownUnionProperty("textDecorationStyle");
 
-export const textDecorationThickness = variantProperty<
-  "textDecorationThickness",
-  KnownCSSValues<"textDecorationThickness"> | CSSLengthPercentage
->("textDecorationThickness");
+export const textDecorationThickness = <T extends string>(
+  thickness: KnownCSSValues<"textDecorationThickness"> | CSSLengthPercentage<T>
+): PropertyTuple<"textDecorationThickness"> =>
+  [
+    "textDecorationThickness",
+    thickness.toString() as TypedCSSProperties["textDecorationThickness"],
+  ] as const;
 
-type TextShadowArgs =
-  | [offsetX: CSSLengthPercentage, offsetY: CSSLengthPercentage]
+type TextShadowArgs<T extends string> =
+  | [offsetX: CSSLengthPercentage<T>, offsetY: CSSLengthPercentage<T>]
   | [
-      offsetX: CSSLengthPercentage,
-      offsetY: CSSLengthPercentage,
+      offsetX: CSSLengthPercentage<T>,
+      offsetY: CSSLengthPercentage<T>,
       color: CSSColor
     ]
   | [
-      offsetX: CSSLengthPercentage,
-      offsetY: CSSLengthPercentage,
-      blurRadius: CSSLengthPercentage
+      offsetX: CSSLengthPercentage<T>,
+      offsetY: CSSLengthPercentage<T>,
+      blurRadius: CSSLengthPercentage<T>
     ]
   | [
-      offsetX: CSSLengthPercentage,
-      offsetY: CSSLengthPercentage,
-      blurRadius: CSSLengthPercentage,
+      offsetX: CSSLengthPercentage<T>,
+      offsetY: CSSLengthPercentage<T>,
+      blurRadius: CSSLengthPercentage<T>,
       color: CSSColor
     ];
 
 export interface TextShadow {
-  (...args: TextShadowArgs): PropertyTuple<"textShadow">;
-  (...args: [TextShadowArgs, ...TextShadowArgs[]]): PropertyTuple<"textShadow">;
+  (global: CSS.Globals): PropertyTuple<"textShadow">;
+  <T extends string>(...args: TextShadowArgs<T>): PropertyTuple<"textShadow">;
+  <T extends string>(
+    ...args: [TextShadowArgs<T>, ...TextShadowArgs<T>[]]
+  ): PropertyTuple<"textShadow">;
 }
 
 export const textShadow: TextShadow = (

@@ -1,14 +1,14 @@
 import { FitContent } from "../function";
-import { KnownCSSValues } from "../types";
+import { KnownCSSValues, TypedCSSProperties } from "../types";
 import { CSSLengthPercentage } from "../unit";
-import { variantProperty } from "../utils";
+import { PropertyTuple } from "../utils";
 
-export const blockSize = variantProperty<
-  "blockSize",
-  KnownCSSValues<"blockSize"> | CSSLengthPercentage | FitContent
->("blockSize");
+export const blockSize = <T extends string>(
+  size: KnownCSSValues<"blockSize"> | CSSLengthPercentage<T> | FitContent
+): PropertyTuple<"blockSize"> =>
+  ["blockSize", size.toString() as TypedCSSProperties["blockSize"]] as const;
 
-export const inlineSize = variantProperty<
-  "inlineSize",
-  KnownCSSValues<"inlineSize"> | CSSLengthPercentage | FitContent
->("inlineSize");
+export const inlineSize = <T extends string>(
+  size: KnownCSSValues<"inlineSize"> | CSSLengthPercentage<T> | FitContent
+): PropertyTuple<"inlineSize"> =>
+  ["inlineSize", size.toString() as TypedCSSProperties["inlineSize"]] as const;

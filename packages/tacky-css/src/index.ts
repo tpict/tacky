@@ -3,12 +3,12 @@ import { CSSObject } from "@emotion/react";
 import * as color from "./color";
 import * as funktion from "./function";
 import * as image from "./image";
-import { media } from "./media";
+import { media, Media } from "./media";
 import * as property from "./property";
 export * from "./types";
 import * as unit from "./unit";
 
-export { property, unit, color, funktion };
+export { property, unit, color, funktion, Media };
 
 import { TypedCSSArray } from "./types";
 
@@ -21,7 +21,7 @@ export const tackyArg = {
   media,
 } as const;
 
-type TackyArg = typeof tackyArg;
+export type TackyArg = typeof tackyArg;
 
 export const compile = (styles: TypedCSSArray): CSSObject =>
   styles.reduce((acc, [key, value]) => {

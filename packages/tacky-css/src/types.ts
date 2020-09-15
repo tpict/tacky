@@ -236,9 +236,9 @@ export type TypedCSSProperties = PrimitiveUnionProperties &
     // ========================================================================
   >;
 
-export type TypedCSSArray = (
+export type TypedCSSArray<Properties = TypedCSSProperties> = (
   | {
-      [P in keyof TypedCSSProperties]: readonly [P, TypedCSSProperties[P]];
-    }[keyof TypedCSSProperties]
-  | [MediaQuery, TypedCSSArray]
+      [P in keyof Properties]: readonly [P, Properties[P]];
+    }[keyof Properties]
+  | [MediaQuery, TypedCSSArray<Properties>]
 )[];

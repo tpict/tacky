@@ -9,7 +9,7 @@ import {
   MediaQuery,
 } from "./types";
 
-type RequiredCSSArray = [TypedCSSArray[number], ...TypedCSSArray];
+type RequiredArray<T extends unknown[]> = [T[number], ...T];
 
 const mediaHelpers = {
   ...mediaFeatures,
@@ -19,19 +19,20 @@ const mediaHelpers = {
 
 type MediaHelpers = typeof mediaHelpers;
 
-export interface Media extends MediaHelpers {
+export interface Media<T extends unknown[] = TypedCSSArray>
+  extends MediaHelpers {
   (
     expressions: [AnyMediaMember, ...AnyMediaMember[]],
-    ...styles: RequiredCSSArray
-  ): [MediaQuery, TypedCSSArray];
+    ...styles: RequiredArray<T>
+  ): [MediaQuery, T];
   (
     expressions: [
       "not" | "only",
       MediaType | MediaTypeExpression,
       ...AnyMediaMember[]
     ],
-    ...styles: RequiredCSSArray
-  ): [MediaQuery, TypedCSSArray];
+    ...styles: RequiredArray<T>
+  ): [MediaQuery, T];
 }
 
 export const media: Media = Object.assign(

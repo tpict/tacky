@@ -8,7 +8,7 @@ import * as property from "./property";
 export * from "./types";
 import * as unit from "./unit";
 
-export { property, unit, color, funktion, Media };
+export { property, unit, color, funktion, image, media, Media };
 
 import { TypedCSSArray } from "./types";
 

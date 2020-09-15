@@ -10,7 +10,7 @@
     "start": "webpack-dev-server --config webpack.config.js",
     "test": "jest",
     "debug": "node --inspect-brk node_modules/.bin/jest --runInBand --env=jsdom",
-    "build:lib": "cd packages/tacky-css && rm -r lib; yarn && tsc && cp package.json lib",
+    "build:lib": "cd packages/tacky-css && rm -r lib; yarn && tsc",
     "publish:lib": "cd packages/tacky-css/lib && yarn publish",
     "format:lib": "eslint --fix packages/tacky-css/src --ext ts"
   },

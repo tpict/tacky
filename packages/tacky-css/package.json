@@ -2,7 +2,7 @@
   "name": "tacky-css",
   "version": "0.0.1",
   "description": "TypeScript DSL for CSS",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/tpict/tacky",
   "author": "Tom Picton (tom@tompicton.com)",
   "license": "MIT",

@@ -42,9 +42,13 @@ export function createStringifyType(
         return createTypeAliasName(type, currentNamespace) + stringifyGenerics(type.generics);
       }
       case Type.Length:
-        return lengthGeneric.name;
+        return "ManualDataType." + lengthGeneric.name;
+      case Type.Percentage:
+        return "ManualDataType." + "TPercentage";
+      case Type.LengthPercentage:
+        return "ManualDataType." + "TLengthPercentage";
       case Type.Time:
-        return timeGeneric.name;
+        return "ManualDataType." + timeGeneric.name;
     }
   }) as (type: DeclarableType) => string;
 

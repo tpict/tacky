@@ -1,31 +1,9 @@
-namespace CSS {
-  export type Global = "initial" | "unset";
-  export type Clear = "left" | "right";
-}
-
-namespace ValueEnum {
-  export enum Clear {
-    _ = "",
-  }
-}
-
-interface Value {
-  clear: string & ValueEnum.Clear;
-}
-
-export type PropertyTuple<T extends keyof Value> = [T, Value[T]];
-
-namespace Property {
-  export interface Clear {
-    (clear: CSS.Clear): PropertyTuple<"clear">;
-    (global: CSS.Global): PropertyTuple<"clear">;
-  }
-}
-
-namespace Property {
-  export interface Clear {
-    (example: "primary"): PropertyTuple<"clear">;
-  }
-}
-
-export const clear: Property.Clear = (arg: unknown) => ["clear", arg] as any;
+// Terminology taken from ReasonML - the idea is something like a variant that
+// takes a single string arg, so the type system can distinguish strings from
+// different sources even if their values aren't known.
+//
+// TODO: In TS 4.1 use
+// export type TackyVariant<T extends string> = string & {[_ in T as `_tacky_id_${T}`]: never };
+// This is safer as users will be less likely to access the "brand" property
+// (which is removed by the Babel macro)
+export type TackyVariant<T extends string> = string & { _tacky_id: T };

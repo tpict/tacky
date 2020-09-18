@@ -131,8 +131,6 @@ export async function declarator(minTypesInDataTypes: number) {
     ])
   );
 
-  debugger;
-
   function getGenericsFrom(types: MixedType[]): IGenerics[] {
     let hasLength = false;
     let hasTime = false;
@@ -298,7 +296,7 @@ export async function declarator(minTypesInDataTypes: number) {
       const generics = getGenericsFrom(property.types);
 
       const validTypes = property.types.filter(
-        ({ type }) => ![Type.String, Type.Length, Type.Time].includes(type)
+        ({ type }) => ![Type.String].includes(type)
       );
 
       // Some properties are prefixed and share the same type so we

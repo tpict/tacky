@@ -1,6 +1,6 @@
 // import * as chokidar from 'chokidar';
 import * as path from "path";
-// import * as prettier from 'prettier';
+import * as prettier from "prettier";
 import { writeFileAsync } from "./utils";
 
 // import { runCLI } from 'jest';
@@ -17,8 +17,9 @@ async function trigger(): Promise<void> {
     }
   }
   const { default: generateTypescript } = await import("./csstype/typescript");
-  const result = await generateTypescript();
-  await writeFileAsync("./src/generated.ts", result);
+  const unformatted = await generateTypescript();
+  const formatted = await format(unformatted);
+  await writeFileAsync("./src/generated.ts", formatted);
 }
 
 // if (process.argv.includes('--start')) {
@@ -79,19 +80,21 @@ async function trigger(): Promise<void> {
 //   return { unformattedFlow: await generateFlow(), unformattedTypescript: await generateTypescript() };
 // }
 
-// async function format(output: string, parser: prettier.BuiltInParserName) {
-//   const options = await prettier.resolveConfig(path.join(__dirname, '.prettierrc'));
-//   try {
-//     return prettier.format(output, {
-//       ...options,
-//       printWidth: 180,
-//       singleQuote: false,
-//       parser,
-//     });
-//   } catch (e) {
-//     throw new Error(e);
-//   }
-// }
+async function format(output: string): Promise<string> {
+  const options = await prettier.resolveConfig(
+    path.join(__dirname, ".prettierrc")
+  );
+  try {
+    return prettier.format(output, {
+      ...options,
+      printWidth: 180,
+      singleQuote: false,
+      parser: "typescript",
+    });
+  } catch (e) {
+    throw new Error(e);
+  }
+}
 
 // function testing() {
 //   return runCLI({ testMatch: ['**/__tests__/dist.*.ts'] } as any, [__dirname]);

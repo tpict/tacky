@@ -24,10 +24,12 @@ export enum Type {
   String,
   Number,
   Never,
+  LengthPercentage,
+  Percentage
 }
 
 interface IBasic {
-  type: Type.String | Type.Number | Type.Length | Type.Time | Type.Never;
+  type: Type.String | Type.Number | Type.Length | Type.Time | Type.Never | Type.LengthPercentage | Type.Percentage;
 }
 
 export interface IDataType<TType = Type.DataType | Type.PropertyReference> {
@@ -54,6 +56,8 @@ export type ResolvedType = TypeType<DataType>;
 
 let getBasicDataTypes = () => {
   const types = Object.keys(cssTypes).reduce<{ [name: string]: IBasic }>((dataTypes, name) => {
+    console.log(name);
+
     switch (name) {
       case 'number':
       case 'integer':
@@ -64,6 +68,16 @@ let getBasicDataTypes = () => {
       case 'length':
         dataTypes[name] = {
           type: Type.Length,
+        };
+        break;
+      case 'length-percentage':
+        dataTypes[name] = {
+          type: Type.LengthPercentage,
+        };
+        break;
+      case 'percentage':
+        dataTypes[name] = {
+          type: Type.Percentage,
         };
         break;
       case 'time':
@@ -184,6 +198,32 @@ function addLength<TDataType extends IDataType>(types: TypeType<TDataType>[]): T
       ...types,
       {
         type: Type.Length,
+      },
+    ];
+  }
+
+  return types;
+}
+
+function addLengthPercentage<TDataType extends IDataType>(types: TypeType<TDataType>[]): TypeType<TDataType>[] {
+  if (types.every(type => type.type !== Type.LengthPercentage)) {
+    return [
+      ...types,
+      {
+        type: Type.LengthPercentage,
+      },
+    ];
+  }
+
+  return types;
+}
+
+function addPercentage<TDataType extends IDataType>(types: TypeType<TDataType>[]): TypeType<TDataType>[] {
+  if (types.every(type => type.type !== Type.Percentage)) {
+    return [
+      ...types,
+      {
+        type: Type.Percentage,
       },
     ];
   }
@@ -315,6 +355,10 @@ export function addType<TDataType extends IDataType>(
   switch (type.type) {
     case Type.Length:
       return addLength(types);
+    case Type.Percentage:
+      return addPercentage(types);
+    case Type.LengthPercentage:
+      return addLengthPercentage(types);
     case Type.Time:
       return addTime(types);
     case Type.String:

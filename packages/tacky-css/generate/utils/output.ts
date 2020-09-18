@@ -9,6 +9,7 @@ import {
   timeGeneric,
 } from '../declarator';
 import { Type } from '../syntax/typer';
+import { toPascalCase } from "./casing";
 
 export const EOL = '\n';
 
@@ -43,6 +44,8 @@ export function createStringifyType(
       }
       case Type.Length:
         return "ManualDataType." + lengthGeneric.name;
+      case Type.Function:
+        return "ManualDataType.T" + toPascalCase(type.literal);
       case Type.Percentage:
         return "ManualDataType." + "TPercentage";
       case Type.LengthPercentage:

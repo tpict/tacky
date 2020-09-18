@@ -25,7 +25,8 @@ export enum Type {
   Number,
   Never,
   LengthPercentage,
-  Percentage
+  Percentage,
+  Function
 }
 
 interface IBasic {
@@ -47,17 +48,20 @@ interface INumericLiteral {
   literal: number;
 }
 
+interface IFunctiono {
+  type: Type.Function;
+  literal: string;
+}
+
 export type DataType = IDataType<Type.DataType>;
 
 // Yet another reminder; naming is hard
-export type TypeType<TDataType = IDataType> = IBasic | IStringLiteral | INumericLiteral | TDataType;
+export type TypeType<TDataType = IDataType> = IBasic | IStringLiteral | INumericLiteral | TDataType | IFunctiono;
 
 export type ResolvedType = TypeType<DataType>;
 
 let getBasicDataTypes = () => {
   const types = Object.keys(cssTypes).reduce<{ [name: string]: IBasic }>((dataTypes, name) => {
-    console.log(name);
-
     switch (name) {
       case 'number':
       case 'integer':
@@ -150,6 +154,9 @@ export default function typing(entities: EntityType[]): TypeType[] {
             types = addStringLiteral(types, entity.value);
           }
           break;
+        case Component.Function:
+          types = addFunction(types, entity.name);
+          break;
         case Component.DataType: {
           const value = valueOfDataType(entity.value);
           if (value in getBasicDataTypes()) {
@@ -191,6 +198,8 @@ export default function typing(entities: EntityType[]): TypeType[] {
 
   return types;
 }
+
+
 
 function addLength<TDataType extends IDataType>(types: TypeType<TDataType>[]): TypeType<TDataType>[] {
   if (types.every(type => type.type !== Type.Length)) {
@@ -300,6 +309,23 @@ function addStringLiteral<TDataType extends IDataType>(
   return types;
 }
 
+function addFunction<TDataType extends IDataType>(
+  types: TypeType<TDataType>[],
+  name: string
+): TypeType<TDataType>[] {
+  if (types.every(type => !(type.type === Type.Function && type.literal === name))) {
+    return [
+      ...types,
+      {
+        type: Type.Function,
+        literal: name,
+      },
+    ];
+  }
+
+  return types;
+}
+
 function addNumericLiteral<TDataType extends IDataType>(
   types: TypeType<TDataType>[],
   literal: number,
@@ -375,6 +401,8 @@ export function addType<TDataType extends IDataType>(
       return addDataType(types, type.name);
     case Type.PropertyReference:
       return addPropertyReference(types, type.name);
+    case Type.Function:
+      return addFunction(types, type.literal);
   }
 }
 

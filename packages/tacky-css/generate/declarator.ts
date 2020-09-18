@@ -450,6 +450,9 @@ function sorter(a: MixedType, b: MixedType) {
   if (a.type === Type.StringLiteral && b.type === Type.StringLiteral) {
     return a.literal < b.literal ? -1 : a.literal > b.literal ? 1 : 0;
   }
+  if (a.type === Type.Function && b.type === Type.Function) {
+    return a.literal < b.literal ? -1 : a.literal > b.literal ? 1 : 0;
+  }
   if (a.type === Type.NumericLiteral && b.type === Type.NumericLiteral) {
     return a.literal - b.literal;
   }

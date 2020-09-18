@@ -18,7 +18,12 @@ import {
   stringifyGenerics,
 } from "./utils/output";
 
-export default async function typescript(): Promise<string> {
+interface FileRef {
+  name: string;
+  content: string;
+}
+
+export default async function typescript(): Promise<FileRef[]> {
   const {
     namespaces,
     interfaces,
@@ -79,21 +84,32 @@ export default async function typescript(): Promise<string> {
 
   const disableAutoExport = "export {};" + EOL;
   const propertyTuple =
-    "export type PropertyTuple<T extends keyof Values> = readonly [T, Values[T]]" + EOL;
+    "export type PropertyTuple<T extends keyof Values> = readonly [T, Values[T]]" +
+    EOL;
 
-  return (
-    disableAutoExport +
-    EOL +
-    propertyTuple +
-    EOL +
-    interfacesOutput +
-    EOL +
-    declarationsOutput +
-    EOL +
-    namespaceOutput +
-    EOL +
-    extra.join("\n\n")
-  );
+  const types = {
+    name: "types.ts",
+    content:
+      disableAutoExport +
+      EOL +
+      propertyTuple +
+      EOL +
+      interfacesOutput +
+      EOL +
+      declarationsOutput +
+      EOL +
+      namespaceOutput,
+  };
+
+  const properties = {
+    name: "property.ts",
+    content:
+      'import { Values, Property } from "./types";' +
+      EOL +
+      extra.join("\n\n"),
+  };
+
+  return [types, properties];
 }
 
 async function outputInterface(
@@ -201,10 +217,12 @@ function stringifyTypes(
     return namespace + type.name;
   }, currentNamespace);
 
-  return types
-    // .filter(({ type }) => ![Type.String, Type.Length, Type.Time].includes(type))
-    .map(type => stringifyType(type))
-    .join(" | ");
+  return (
+    types
+      // .filter(({ type }) => ![Type.String, Type.Length, Type.Time].includes(type))
+      .map(type => stringifyType(type))
+      .join(" | ")
+  );
 }
 
 function stringifySimpleTypes(types: SimpleType[]): string {

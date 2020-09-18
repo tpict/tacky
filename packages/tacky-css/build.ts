@@ -1,4 +1,5 @@
 // import * as chokidar from 'chokidar';
+import * as fs from "fs";
 import * as path from "path";
 import * as prettier from "prettier";
 import { writeFileAsync } from "./utils";
@@ -10,16 +11,34 @@ trigger().then(() => {
 });
 
 async function trigger(): Promise<void> {
-  const generatePath = path.resolve("./csstype");
+  const generatePath = path.resolve("./generate");
   for (const key in require.cache) {
     if (key.indexOf(generatePath) !== -1) {
       delete require.cache[key];
     }
   }
-  const { default: generateTypescript } = await import("./csstype/typescript");
+
+  const outDir = path.resolve("./src/generated");
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir);
+  }
+
+  const { default: generateTypescript } = await import("./generate/typescript");
   const unformatted = await generateTypescript();
-  const formatted = await format(unformatted);
-  await writeFileAsync("./src/generated.ts", formatted);
+
+  const formatted = await Promise.all(
+    unformatted.map(async ({ name, content }) => ({
+      name,
+      content: await format(content),
+    }))
+  );
+
+  await Promise.all(
+    formatted.map(
+      async ({ name, content }) =>
+        await writeFileAsync(`./src/generated/${name}`, content)
+    )
+  );
 }
 
 // if (process.argv.includes('--start')) {

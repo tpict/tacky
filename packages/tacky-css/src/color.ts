@@ -12,4 +12,16 @@ export const rgba = (
   alpha: number
 ): Rgba => `rgba(${red}, ${green}, ${blue}, ${alpha})` as Rgba;
 
-export type CSSColor = Rgb | Rgba;
+export type Hsl = TackyVariant<"hsl">;
+export const hsl = (hue: number, saturation: number, lightness: number): Hsl =>
+  `hsl(${hue}, ${saturation}, ${lightness})` as Hsl;
+
+export type Hsla = TackyVariant<"hsla">;
+export const hsla = (
+  hue: number,
+  saturation: number,
+  lightness: number,
+  alpha: number
+): Hsla => `hsla(${hue}, ${saturation}, ${lightness}, ${alpha})` as Hsla;
+
+export type CSSColor = Rgb | Rgba | Hsl | Hsla;

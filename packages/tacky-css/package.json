@@ -8,11 +8,9 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
-    "@emotion/react": "^11.0.0-next.15",
-    "@types/babel-plugin-macros": "^2.8.2",
-    "babel-plugin-macros": "^2.8.0",
-    "csstype": "^3.0.3",
-    "nanoid": "^3.1.12",
-    "typescript": "^4.0.2"
+    "mdn-browser-compat-data": "git+https://github.com/mdn/browser-compat-data.git#bce11b3da31a3b3425280730360ee42d7cc55328",
+    "mdn-data": "git+https://github.com/mdn/data.git#3191d4b889364bca969dfcc84e490928d84710ef",
+    "css-syntax-parser": "^1.5.1",
+    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/85793/artifacts?artifactName=tgz&fileId=7D8AAC1002D527E1F7882C8F4446E1EDCC8042C72C8F7CE66574F92142CC7D8402&fileName=/typescript-4.1.0-insiders.20200918.tgz"
   }
 }

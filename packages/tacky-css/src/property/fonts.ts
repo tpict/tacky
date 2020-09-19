@@ -1,36 +1,18 @@
-import { TypedCSSProperties } from "../types";
-import { CSSLengthPercentage } from "../unit";
-import { knownUnionProperty, PropertyTuple, variantProperty } from "../utils";
+import { Property, Values } from "../generated/types";
 
-// TODO: User-extendable interface
-export const fontFamily = (
-  ...fontFamilies: [string, ...string[]]
-): PropertyTuple<"fontFamily"> => [
-  "fontFamily",
-  fontFamilies
-    .map(family => (family.includes(" ") ? `"${family}"` : family))
-    .join(", ") as TypedCSSProperties["fontFamily"],
-];
+declare module "../generated/types" {
+  namespace Property {
+    // TODO: User-extendable interface
+    export interface FontFamily {
+      (...fontFamilies: [string, ...string[]]): PropertyTuple<"fontFamily">;
+    }
+  }
+}
 
-export const fontKerning = knownUnionProperty("fontKerning");
-
-export const fontOpticalSizing = knownUnionProperty("fontOpticalSizing");
-
-export const fontSize = variantProperty<"fontSize", CSSLengthPercentage>(
-  "fontSize"
-);
-
-export const fontSizeAdjust = knownUnionProperty("fontSizeAdjust");
-
-export const fontStretch = knownUnionProperty("fontStretch");
-
-export const fontVariantCaps = knownUnionProperty("fontVariantCaps");
-
-export const fontVariantPosition = knownUnionProperty("fontVariantPosition");
-
-export const lineHeight = variantProperty<
-  "lineHeight",
-  CSSLengthPercentage | number
->("lineHeight");
-
-export const fontWeight = knownUnionProperty("fontWeight");
+export const fontFamily: Property.FontFamily = (...args: unknown[]) =>
+  [
+    "fontFamily",
+    (args as string[])
+      .map(family => (family.includes(" ") ? `"${family}"` : family))
+      .join(", ") as Values["fontFamily"],
+  ] as const;

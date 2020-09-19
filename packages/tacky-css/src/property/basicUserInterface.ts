@@ -1,29 +1,10 @@
-import { CSSColor } from "../color";
-import { KnownCSSValues } from "../types";
-import { CSSLength } from "../unit";
-import { knownUnionProperty, variantProperty } from "../utils";
+import { Property, Values } from "../generated/types";
 
-export const boxSizing = knownUnionProperty("boxSizing");
+export const cursor: Property.Cursor = (arg: unknown) =>
+  ["cursor", arg as Values["cursor"]] as const;
 
-export const caretColor = variantProperty<"caretColor", CSSColor | "auto">(
-  "caretColor"
-);
+export const outlineStyle: Property.OutlineStyle = (arg: unknown) =>
+  ["outlineStyle", arg as Values["outlineStyle"]] as const;
 
-export const cursor = knownUnionProperty("cursor");
-
-export const outlineColor = variantProperty<"outlineColor", CSSColor>(
-  "outlineColor"
-);
-
-export const outlineStyle = knownUnionProperty("outlineStyle");
-
-export const outlineWidth = variantProperty<
-  "outlineWidth",
-  KnownCSSValues<"outlineWidth"> | CSSLength
->("outlineWidth");
-
-export const resize = knownUnionProperty("resize");
-
-export const textOverflow = knownUnionProperty("textOverflow");
-
-export const userSelect = knownUnionProperty("userSelect");
+export const textOverflow: Property.TextOverflow = (arg: unknown) =>
+  ["textOverflow", arg as Values["textOverflow"]] as const;

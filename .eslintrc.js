@@ -49,5 +49,7 @@ module.exports = {
       },
     ],
     "arrow-parens": ["error", "as-needed"],
+    "@typescript-eslint/no-namespace": 0,
+    "@typescript-eslint/no-empty-interface": 0,
   },
 };

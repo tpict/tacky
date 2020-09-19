@@ -1,31 +1,41 @@
-import * as CSS from "csstype";
 import { AnimatableProperties } from "../animation";
 import { PropertyTuple } from "../utils";
 import { CSSTime } from "../unit";
-import { TypedCSSProperties } from "../types";
+import { Values, Property } from "../generated/types";
 
-export const transitionDelay = (
-  ...args: [keyword: CSS.Globals] | [...delay: [CSSTime, ...CSSTime[]]]
-): PropertyTuple<"transitionDelay"> =>
-  [
-    "transitionDelay",
-    args.join(", ") as TypedCSSProperties["transitionDelay"],
-  ] as const;
+declare module "../generated/types" {
+  namespace Property {
+    export interface TransitionDelay {
+      (...delay: [CSSTime, ...CSSTime[]]): PropertyTuple<"transitionDelay">;
+    }
 
-export const transitionDuration = (
-  ...args: [keyword: CSS.Globals] | [...duration: [CSSTime, ...CSSTime[]]]
-): PropertyTuple<"transitionDuration"> =>
+    export interface TransitionDuration {
+      (...delay: [CSSTime, ...CSSTime[]]): PropertyTuple<"transitionDuration">;
+    }
+
+    export interface TransitionProperty {
+      (
+        ...properties: [AnimatableProperties, ...AnimatableProperties[]]
+      ): PropertyTuple<"transitionProperty">;
+    }
+  }
+}
+
+export const transitionDelay: Property.TransitionDelay = (...args: unknown[]) =>
+  ["transitionDelay", args.join(", ") as Values["transitionDelay"]] as const;
+
+export const transitionDuration: Property.TransitionDuration = (
+  ...args: unknown[]
+) =>
   [
     "transitionDuration",
-    args.join(", ") as TypedCSSProperties["transitionDuration"],
+    args.join(", ") as Values["transitionDuration"],
   ] as const;
 
 export const transitionProperty = (
-  ...args:
-    | [keyword: CSS.Globals | "all" | "none"]
-    | [...properties: [AnimatableProperties, ...AnimatableProperties[]]]
+  ...args: unknown[]
 ): PropertyTuple<"transitionProperty"> =>
   [
     "transitionProperty",
-    args.join(", ") as TypedCSSProperties["transitionProperty"],
+    args.join(", ") as Values["transitionProperty"],
   ] as const;

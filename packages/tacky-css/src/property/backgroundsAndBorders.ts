@@ -1,37 +1,200 @@
+// TODO: Elliptical radii
 import * as CSS from "csstype";
 import { CSSColor } from "../color";
 import { CSSImage } from "../image";
-import { KnownCSSValues, TypedCSSProperties } from "../types";
+import { KnownCSSValues } from "../types";
 import { CSSLength, CSSLengthPercentage, Percent } from "../unit";
-import {
-  knownUnionProperty,
-  variantProperty,
-  PropertyTuple,
-  FourDimensionalArgs,
-  FourDimensionalProperty,
-} from "../utils";
+import { FourDimensionalArgs, FourDimensionalProperty } from "../utils";
+import { Property, Values, PropertyTuple } from "../generated/types";
 
 type BackgroundAttachmentKeyword = Exclude<
   KnownCSSValues<"backgroundAttachment">,
   CSS.Globals
 >;
 
-export interface BackgroundAttachment {
-  (global: CSS.Globals): PropertyTuple<"backgroundAttachment">;
+export interface GenericBorder<T extends keyof Values> {
+  (style: BorderStyleValue): PropertyTuple<T>;
+  (style: BorderStyleValue, color: CSSColor): PropertyTuple<T>;
+  (width: CSSLengthPercentage, style: BorderStyleValue): PropertyTuple<T>;
   (
-    ...attachments: [
-      BackgroundAttachmentKeyword,
-      ...BackgroundAttachmentKeyword[]
-    ]
-  ): PropertyTuple<"backgroundAttachment">;
+    width: CSSLengthPercentage,
+    style: BorderStyleValue,
+    color: CSSColor
+  ): PropertyTuple<T>;
 }
 
-export const backgroundAttachment: BackgroundAttachment = (
+declare module "../generated/types" {
+  namespace Property {
+    export interface BackgroundAttachment {
+      (
+        ...attachments: [
+          BackgroundAttachmentKeyword,
+          ...BackgroundAttachmentKeyword[]
+        ]
+      ): PropertyTuple<"backgroundAttachment">;
+    }
+
+    export interface BackgroundClip {
+      (
+        ...clip: [BackgroundClipKeyword, ...BackgroundClipKeyword[]]
+      ): PropertyTuple<"backgroundClip">;
+    }
+
+    export interface BackgroundImage {
+      (...backgrounds: [CSSImage, ...CSSImage[]]): PropertyTuple<
+        "backgroundImage"
+      >;
+    }
+
+    export interface BackgroundOrigin {
+      (
+        ...origin: [BackgroundOriginKeyword, ...BackgroundOriginKeyword[]]
+      ): PropertyTuple<"backgroundOrigin">;
+    }
+
+    export interface BackgroundPosition {
+      (
+        ...args: [
+          PartialBackgroundPositionArgs,
+          PartialBackgroundPositionArgs[]
+        ]
+      ): PropertyTuple<"backgroundPosition">;
+    }
+
+    export interface BackgroundRepeat {
+      (
+        x: BackgroundRepeatOptionKeyword,
+        y: BackgroundRepeatOptionKeyword
+      ): PropertyTuple<"backgroundRepeat">;
+    }
+
+    export interface BackgroundSize {
+      (
+        width: CSSLengthPercentage | "auto",
+        height: CSSLengthPercentage | "auto"
+      ): PropertyTuple<"backgroundSize">;
+    }
+
+    export interface Border extends GenericBorder<"border"> {}
+
+    export interface BorderBottom extends GenericBorder<"borderBottom"> {}
+
+    export interface BorderColor {
+      (...args: FourDimensionalArgs<CSSColor>): PropertyTuple<"borderColor">;
+    }
+
+    export interface BorderImageOutset {
+      (...args: FourDimensionalArgs<CSSLength | number>): PropertyTuple<
+        "borderImageOutset"
+      >;
+    }
+
+    export interface BorderImageRepeat {
+      (
+        topAndBottom: BorderImageRepeatKeyword,
+        leftAndRight: BorderImageRepeatKeyword
+      ): PropertyTuple<"borderImageRepeat">;
+    }
+
+    // TODO: Allow "fill" keyword at any position
+    export interface BorderImageSlice {
+      (all: number | Percent, fill?: "fill"): PropertyTuple<"borderImageSlice">;
+      (
+        vertical: number | Percent,
+        horizontal: number | Percent,
+        fill?: "fill"
+      ): PropertyTuple<"borderImageSlice">;
+      (
+        top: number | Percent,
+        horizontal: number | Percent,
+        bottom: number | Percent,
+        fill?: "fill"
+      ): PropertyTuple<"borderImageSlice">;
+      (
+        top: number | Percent,
+        left: number | Percent,
+        bottom: number | Percent,
+        right: number | Percent,
+        fill?: "fill"
+      ): PropertyTuple<"borderImageSlice">;
+    }
+
+    export interface BorderImageWidth
+      extends FourDimensionalProperty<
+        PropertyTuple<"borderImageWidth">,
+        CSSLengthPercentage
+      > {}
+
+    export interface BorderLeft extends GenericBorder<"borderLeft"> {}
+
+    export interface BorderRadius {
+      (...args: BorderRadiusEllipticalCorners): PropertyTuple<"borderRadius">;
+    }
+
+    export interface BorderRight extends GenericBorder<"borderRight"> {}
+
+    export interface BorderStyle {
+      (...styles: [BorderStyleValue, ...BorderStyleValue[]]): PropertyTuple<
+        "borderStyle"
+      >;
+    }
+
+    export interface BorderTop extends GenericBorder<"borderTop"> {}
+
+    export interface BorderWidth {
+      (...args: FourDimensionalArgs): PropertyTuple<"borderWidth">;
+    }
+
+    export interface BoxShadow {
+      (
+        offsetX: CSSLengthPercentage,
+        offsetY: CSSLengthPercentage,
+        blurRadius: CSSLengthPercentage,
+        spreadLength: CSSLengthPercentage,
+        color?: CSSColor
+      ): PropertyTuple<"boxShadow">;
+      (
+        offsetX: CSSLengthPercentage,
+        offsetY: CSSLengthPercentage,
+        blurRadius: CSSLengthPercentage,
+        color?: CSSColor
+      ): PropertyTuple<"boxShadow">;
+      (
+        offsetX: CSSLengthPercentage,
+        offsetY: CSSLengthPercentage,
+        color?: CSSColor
+      ): PropertyTuple<"boxShadow">;
+      (
+        inset: "inset",
+        offsetX: CSSLengthPercentage,
+        offsetY: CSSLengthPercentage,
+        blurRadius: CSSLengthPercentage,
+        spreadLength: CSSLengthPercentage,
+        color?: CSSColor
+      ): PropertyTuple<"boxShadow">;
+      (
+        inset: "inset",
+        offsetX: CSSLengthPercentage,
+        offsetY: CSSLengthPercentage,
+        blurRadius: CSSLengthPercentage,
+        color?: CSSColor
+      ): PropertyTuple<"boxShadow">;
+      (
+        inset: "inset",
+        offsetX: CSSLengthPercentage,
+        offsetY: CSSLengthPercentage,
+        color?: CSSColor
+      ): PropertyTuple<"boxShadow">;
+    }
+  }
+}
+
+export const backgroundAttachment: Property.BackgroundAttachment = (
   ...args: unknown[]
 ) =>
   [
     "backgroundAttachment",
-    args.join(", ") as TypedCSSProperties["backgroundAttachment"],
+    args.join(", ") as Values["backgroundAttachment"],
   ] as const;
 
 // TODO: This is just <box>
@@ -40,33 +203,11 @@ type BackgroundClipKeyword = Exclude<
   CSS.Globals
 >;
 
-export interface BackgroundClip {
-  (global: CSS.Globals): PropertyTuple<"backgroundClip">;
-  (...clip: [BackgroundClipKeyword, ...BackgroundClipKeyword[]]): PropertyTuple<
-    "backgroundClip"
-  >;
-}
+export const backgroundClip: Property.BackgroundClip = (...clip: unknown[]) =>
+  ["backgroundClip", clip.join(", ") as Values["backgroundClip"]] as const;
 
-export const backgroundClip: BackgroundClip = (...clip: unknown[]) =>
-  [
-    "backgroundClip",
-    clip.join(", ") as TypedCSSProperties["backgroundClip"],
-  ] as const;
-
-export const backgroundColor = variantProperty<"backgroundColor", CSSColor>(
-  "backgroundColor"
-);
-
-export interface BackgroundImage {
-  (global: CSS.Globals): PropertyTuple<"backgroundImage">;
-  (...backgrounds: [CSSImage, ...CSSImage[]]): PropertyTuple<"backgroundImage">;
-}
-
-export const backgroundImage: BackgroundImage = (...args: unknown[]) =>
-  [
-    "backgroundImage",
-    args.join(", ") as TypedCSSProperties["backgroundImage"],
-  ] as const;
+export const backgroundImage: Property.BackgroundImage = (...args: unknown[]) =>
+  ["backgroundImage", args.join(", ") as Values["backgroundImage"]] as const;
 
 // TODO: This is just <box>
 type BackgroundOriginKeyword = Exclude<
@@ -74,24 +215,17 @@ type BackgroundOriginKeyword = Exclude<
   CSS.Globals
 >;
 
-export interface BackgroundOrigin {
-  (global: CSS.Globals): PropertyTuple<"backgroundOrigin">;
-  (
-    ...origin: [BackgroundOriginKeyword, ...BackgroundOriginKeyword[]]
-  ): PropertyTuple<"backgroundOrigin">;
-}
-
-export const backgroundOrigin: BackgroundOrigin = (...origin: unknown[]) =>
+export const backgroundOrigin: Property.BackgroundOrigin = (
+  ...origin: unknown[]
+) =>
   [
     "backgroundOrigin",
-    origin.join(", ") as TypedCSSProperties["backgroundOrigin"],
+    origin.join(", ") as Values["backgroundOrigin"],
   ] as const;
 
 type BackgroundPositionKeyword = "top" | "left" | "bottom" | "right" | "center";
 
-export type BackgroundPositionArgs =
-  | [all: BackgroundPositionKeyword]
-  | [left: CSSLengthPercentage]
+type PartialBackgroundPositionArgs =
   | [x: "left" | "right", y: "top" | "bottom" | CSSLengthPercentage]
   | [y: "top" | "bottom", x: "left" | "right" | CSSLengthPercentage]
   | [x: CSSLengthPercentage, y: CSSLengthPercentage]
@@ -102,177 +236,89 @@ export type BackgroundPositionArgs =
       yOffset: CSSLengthPercentage
     ];
 
-export const backgroundPosition = (
-  ...args:
-    | [global: CSS.Globals]
-    | BackgroundPositionArgs
-    | [BackgroundPositionArgs, ...BackgroundPositionArgs[]]
-): PropertyTuple<"backgroundPosition"> =>
+export type BackgroundPositionArgs =
+  | [all: BackgroundPositionKeyword]
+  | [left: CSSLengthPercentage]
+  | PartialBackgroundPositionArgs;
+
+export const backgroundPosition: Property.BackgroundPosition = (
+  ...args: unknown[]
+) =>
   [
     "backgroundPosition",
     (Array.isArray(args[0])
       ? (args as string[][]).map(position => position.join(" ")).join(", ")
-      : args.join(" ")) as TypedCSSProperties["backgroundPosition"],
+      : args.join(" ")) as Values["backgroundPosition"],
   ] as const;
-
-type BackgroundRepeatShorthandKeyword = "repeat-x" | "repeat-y";
 
 type BackgroundRepeatOptionKeyword = "repeat" | "space" | "round" | "no-repeat";
 
-type BackgroundRepeatArgs =
-  | [xy: BackgroundRepeatShorthandKeyword | BackgroundRepeatOptionKeyword]
-  | [x: BackgroundRepeatOptionKeyword, y: BackgroundRepeatOptionKeyword];
-
-export const backgroundRepeat = (
-  ...args:
-    | [global: CSS.Globals]
-    | BackgroundRepeatArgs
-    | [BackgroundRepeatArgs, ...BackgroundRepeatArgs[]]
-): PropertyTuple<"backgroundRepeat"> =>
+export const backgroundRepeat: Property.BackgroundRepeat = (
+  ...args: unknown[]
+) =>
   [
     "backgroundRepeat",
     (Array.isArray(args[0])
       ? (args as string[][]).map(repeat => repeat.join(" ")).join(", ")
-      : args.join(" ")) as TypedCSSProperties["backgroundRepeat"],
+      : args.join(" ")) as Values["backgroundRepeat"],
   ] as const;
 
-type BackgroundSizeKeyword = "cover" | "contain";
-
-type BackgroundSizeArgs =
-  | [keyword: CSS.Globals | BackgroundSizeKeyword]
-  | [width: CSSLengthPercentage | "auto"]
-  | [width: CSSLengthPercentage | "auto", height: CSSLengthPercentage | "auto"];
-
-export const backgroundSize = (
-  ...args: BackgroundSizeArgs | [BackgroundSizeArgs, ...BackgroundSizeArgs[]]
-): PropertyTuple<"backgroundSize"> =>
+export const backgroundSize: Property.BackgroundSize = (...args: unknown[]) =>
   [
     "backgroundSize",
     (Array.isArray(args[0])
       ? (args as string[][]).map(position => position.join(" ")).join(", ")
-      : args.join(" ")) as TypedCSSProperties["backgroundSize"],
+      : args.join(" ")) as Values["backgroundSize"],
   ] as const;
 
-type BorderStyle = TypedCSSProperties["borderTopStyle"];
+type BorderStyleValue = Exclude<KnownCSSValues<"borderTopStyle">, CSS.Globals>;
 
-export interface Border<T extends keyof TypedCSSProperties> {
-  (style: BorderStyle): PropertyTuple<T>;
-  (style: BorderStyle, color: CSSColor): PropertyTuple<T>;
-  (width: CSSLengthPercentage, style: BorderStyle): PropertyTuple<T>;
-  (
-    width: CSSLengthPercentage,
-    style: BorderStyle,
-    color: CSSColor
-  ): PropertyTuple<T>;
-}
+export const border: Property.Border = (...args: unknown[]) =>
+  ["border", args.join(" ") as Values["border"]] as const;
 
-export const border: Border<"border"> = (...args: unknown[]) =>
-  ["border", args.join(" ") as TypedCSSProperties["border"]] as const;
+export const borderBottom: Property.BorderBottom = (...args: unknown[]) =>
+  ["borderBottom", args.join(" ") as Values["borderBottom"]] as const;
 
-export const borderBottom: Border<"borderBottom"> = (...args: unknown[]) =>
+export const borderBottomLeftRadius: Property.BorderBottomLeftRadius = (
+  arg: unknown
+) =>
+  ["borderBottomLeftRadius", arg as Values["borderBottomLeftRadius"]] as const;
+
+export const borderBottomRightRadius: Property.BorderBottomRightRadius = (
+  arg: unknown
+) =>
   [
-    "borderBottom",
-    args.join(" ") as TypedCSSProperties["borderBottom"],
+    "borderBottomRightRadius",
+    arg as Values["borderBottomRightRadius"],
   ] as const;
 
-export const borderBottomColor = variantProperty<
-  "borderBottomColor",
-  CSSColor | "none"
->("borderBottomColor");
+export const borderColor: Property.BorderColor = (...args: unknown[]) =>
+  ["borderColor", args.join(" ") as Values["borderColor"]] as const;
 
-export const borderBottomLeftRadius = variantProperty<
-  "borderBottomLeftRadius",
-  CSSLengthPercentage
->("borderBottomLeftRadius");
-
-export const borderBottomRightRadius = variantProperty<
-  "borderBottomRightRadius",
-  CSSLengthPercentage
->("borderBottomRightRadius");
-
-export const borderBottomStyle = knownUnionProperty("borderBottomStyle");
-
-export const borderBottomWidth = variantProperty<
-  "borderBottomWidth",
-  CSSLengthPercentage
->("borderBottomWidth");
-
-export const borderColor = variantProperty<"borderColor", CSSColor>(
-  "borderColor"
-);
-
-export const borderImageOutset: FourDimensionalProperty<
-  PropertyTuple<"borderImageOutset">,
-  CSSLength | number
-> = (...args: unknown[]) =>
-  [
-    "borderImageOutset",
-    args.join(" ") as TypedCSSProperties["borderImageOutset"],
-  ] as const;
+export const borderImageOutset: Property.BorderImageOutset = (
+  ...args: unknown[]
+) =>
+  ["borderImageOutset", args.join(" ") as Values["borderImageOutset"]] as const;
 
 type BorderImageRepeatKeyword = "stretch" | "repeat" | "round" | "space";
 
-type BorderImageRepeatArgs =
-  | [allSides: BorderImageRepeatKeyword]
-  | [
-      topAndBottom: BorderImageRepeatKeyword,
-      leftAndRight: BorderImageRepeatKeyword
-    ];
+export const borderImageRepeat: Property.BorderImageRepeat = (
+  ...args: unknown[]
+) =>
+  ["borderImageRepeat", args.join(" ") as Values["borderImageRepeat"]] as const;
 
-export const borderImageRepeat = (
-  ...args: [global: CSS.Globals] | BorderImageRepeatArgs
-): PropertyTuple<"borderImageRepeat"> =>
-  [
-    "borderImageRepeat",
-    args.join(" ") as TypedCSSProperties["borderImageRepeat"],
-  ] as const;
+export const borderImageSlice: Property.BorderImageSlice = (
+  ...args: unknown[]
+) =>
+  ["borderImageSlice", args.join(" ") as Values["borderImageSlice"]] as const;
 
-// TODO: Allow "fill" keyword at any position
-export type BorderImageSliceArgs =
-  | [all: number | Percent, fill?: "fill"]
-  | [vertical: number | Percent, horizontal: number | Percent, fill?: "fill"]
-  | [
-      top: number | Percent,
-      horizontal: number | Percent,
-      bottom: number | Percent,
-      fill?: "fill"
-    ];
+export const borderImageWidth: Property.BorderImageWidth = (
+  ...args: unknown[]
+) =>
+  ["borderImageWidth", args.join(" ") as Values["borderImageWidth"]] as const;
 
-export const borderImageSlice = (
-  ...args: [global: CSS.Globals] | BorderImageSliceArgs
-): PropertyTuple<"borderImageSlice"> =>
-  [
-    "borderImageSlice",
-    args.join(" ") as TypedCSSProperties["borderImageSlice"],
-  ] as const;
-
-export const borderImageSource = variantProperty<
-  "borderImageSource",
-  KnownCSSValues<"borderImageSource"> | CSSImage
->("borderImageSource");
-
-export const borderImageWidth = (
-  ...args: FourDimensionalArgs
-): PropertyTuple<"borderImageWidth"> =>
-  [
-    "borderImageWidth",
-    args.join(" ") as TypedCSSProperties["borderImageWidth"],
-  ] as const;
-
-export const borderLeft: Border<"borderLeft"> = (...args: unknown[]) =>
-  ["borderLeft", args.join(" ") as TypedCSSProperties["borderLeft"]] as const;
-
-export const borderLeftColor = variantProperty<
-  "borderLeftColor",
-  CSSColor | "none"
->("borderLeftColor");
-
-export const borderLeftStyle = knownUnionProperty("borderLeftStyle");
-
-export const borderLeftWidth = variantProperty<
-  "borderLeftWidth",
-  CSSLengthPercentage
->("borderLeftWidth");
+export const borderLeft: Property.BorderLeft = (...args: unknown[]) =>
+  ["borderLeft", args.join(" ") as Values["borderLeft"]] as const;
 
 type BorderRadiusCorners =
   | [all: CSSLengthPercentage]
@@ -297,111 +343,28 @@ export type BorderRadiusEllipticalCorners = [
   ...([] | ["/", ...BorderRadiusCorners])
 ];
 
-export interface BorderRadius<T> {
-  (global: CSS.Globals): T;
-  (...args: BorderRadiusEllipticalCorners): T;
-}
+export const borderRadius: Property.BorderRadius = (...args: unknown[]) =>
+  ["borderRadius", args.join(" ") as Values["borderRadius"]] as const;
 
-export const borderRadius: BorderRadius<PropertyTuple<"borderRadius">> = (
-  ...args: unknown[]
-) =>
-  [
-    "borderRadius",
-    args.join(" ") as TypedCSSProperties["borderRadius"],
-  ] as const;
+export const borderRight: Property.BorderRight = (...args: unknown[]) =>
+  ["borderRight", args.join(" ") as Values["borderRight"]] as const;
 
-export const borderRight: Border<"borderRight"> = (...args: unknown[]) =>
-  ["borderRight", args.join(" ") as TypedCSSProperties["borderRight"]] as const;
+export const borderStyle: Property.BorderStyle = (...args: unknown[]) =>
+  ["borderStyle", args.join(" ") as Values["borderStyle"]] as const;
 
-export const borderRightColor = variantProperty<
-  "borderRightColor",
-  CSSColor | "none"
->("borderRightColor");
+export const borderTop: Property.BorderTop = (...args: unknown[]) =>
+  ["borderTop", args.join(" ") as Values["borderTop"]] as const;
 
-export const borderRightStyle = knownUnionProperty("borderRightStyle");
+export const borderTopLeftRadius: Property.BorderTopLeftRadius = (
+  arg: unknown
+) => ["borderTopLeftRadius", arg as Values["borderTopLeftRadius"]] as const;
 
-export const borderRightWidth = variantProperty<
-  "borderRightWidth",
-  CSSLengthPercentage
->("borderRightWidth");
+export const borderTopRightRadius: Property.BorderTopRightRadius = (
+  arg: unknown
+) => ["borderTopRightRadius", arg as Values["borderTopRightRadius"]] as const;
 
-export const borderStyle = knownUnionProperty("borderStyle");
+export const borderWidth: Property.BorderWidth = (...args: unknown[]) =>
+  ["borderWidth", args.join(" ") as Values["borderWidth"]] as const;
 
-export const borderTop: Border<"borderTop"> = (...args: unknown[]) =>
-  ["borderTop", args.join(" ") as TypedCSSProperties["borderTop"]] as const;
-
-export const borderTopColor = variantProperty<
-  "borderTopColor",
-  CSSColor | "none"
->("borderTopColor");
-
-export const borderTopLeftRadius = variantProperty<
-  "borderTopLeftRadius",
-  CSSLengthPercentage
->("borderTopLeftRadius");
-
-export const borderTopRightRadius = variantProperty<
-  "borderTopRightRadius",
-  CSSLengthPercentage
->("borderTopRightRadius");
-
-export const borderTopStyle = knownUnionProperty("borderTopStyle");
-
-export const borderTopWidth = variantProperty<
-  "borderTopWidth",
-  CSSLengthPercentage
->("borderTopWidth");
-
-export const borderWidth = (
-  ...args: FourDimensionalArgs
-): PropertyTuple<"borderWidth"> =>
-  ["borderWidth", args.join(" ") as TypedCSSProperties["borderWidth"]] as const;
-
-export interface BoxShadow {
-  (
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
-    spreadLength: CSSLengthPercentage,
-    color?: CSSColor
-  ): PropertyTuple<"boxShadow">;
-  (
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
-    color?: CSSColor
-  ): PropertyTuple<"boxShadow">;
-  (
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    color?: CSSColor
-  ): PropertyTuple<"boxShadow">;
-  (
-    inset: "inset",
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
-    spreadLength: CSSLengthPercentage,
-    color?: CSSColor
-  ): PropertyTuple<"boxShadow">;
-  (
-    inset: "inset",
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    blurRadius: CSSLengthPercentage,
-    color?: CSSColor
-  ): PropertyTuple<"boxShadow">;
-  (
-    inset: "inset",
-    offsetX: CSSLengthPercentage,
-    offsetY: CSSLengthPercentage,
-    color?: CSSColor
-  ): PropertyTuple<"boxShadow">;
-}
-
-export const boxShadow: BoxShadow = (
-  ...args: unknown[]
-): PropertyTuple<"boxShadow"> => [
-  "boxShadow",
-  args.join(" ") as TypedCSSProperties["boxShadow"],
-];
+export const boxShadow: Property.BoxShadow = (...args: unknown[]) =>
+  ["boxShadow", args.join(" ") as Values["boxShadow"]] as const;

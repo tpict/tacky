@@ -1,17 +1,16 @@
 import * as CSS from "csstype";
-import { KnownCSSValues, TypedCSSProperties } from "../types";
-import { PropertyTuple, knownUnionProperty } from "../utils";
+import { KnownCSSValues } from "../types";
+import { Property, Values } from "../generated/types";
 
 type OverflowKeyword = Exclude<KnownCSSValues<"overflow">, CSS.Globals>;
 
-export interface Overflow {
-  (xy: OverflowKeyword | CSS.Globals): PropertyTuple<"overflow">;
-  (x: OverflowKeyword, y: OverflowKeyword): PropertyTuple<"overflow">;
+declare module "../generated/types" {
+  namespace Property {
+    export interface Overflow {
+      (x: OverflowKeyword, y: OverflowKeyword): PropertyTuple<"overflow">;
+    }
+  }
 }
 
-export const overflow: Overflow = (...args: unknown[]) =>
-  ["overflow", args.join(" ") as TypedCSSProperties["overflow"]] as const;
-
-export const overflowX = knownUnionProperty("overflowX");
-
-export const overflowY = knownUnionProperty("overflowY");
+export const overflow: Property.Overflow = (...args: unknown[]) =>
+  ["overflow", args.join(" ") as Values["overflow"]] as const;

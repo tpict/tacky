@@ -1,25 +1,20 @@
-import { KnownCSSValues } from "../types";
-import { CSSLengthPercentage } from "../unit";
-import { knownUnionProperty, variantProperty } from "../utils";
+import { Values, Property } from "../generated/types";
+// TODO: these all have additional syntaxes
 
-export const alignContent = knownUnionProperty("alignContent");
+export const alignContent: Property.AlignContent = (arg: unknown) =>
+  ["alignContent", arg as Values["alignContent"]] as const;
 
-export const alignItems = knownUnionProperty("alignItems");
+export const alignItems: Property.AlignItems = (arg: unknown) =>
+  ["alignItems", arg as Values["alignItems"]] as const;
 
-export const alignSelf = knownUnionProperty("alignSelf");
+export const alignSelf: Property.AlignSelf = (arg: unknown) =>
+  ["alignSelf", arg as Values["alignSelf"]] as const;
 
-export const gridRowGap = variantProperty<
-  "gridRowGap",
-  KnownCSSValues<"rowGap"> | CSSLengthPercentage
->("gridRowGap");
+export const justifyContent: Property.JustifyContent = (arg: unknown) =>
+  ["justifyContent", arg as Values["justifyContent"]] as const;
 
-export const justifyContent = knownUnionProperty("justifyContent");
+export const justifyItems: Property.JustifyItems = (arg: unknown) =>
+  ["justifyItems", arg as Values["justifyItems"]] as const;
 
-export const justifyItems = knownUnionProperty("justifyItems");
-
-export const justifySelf = knownUnionProperty("justifySelf");
-
-export const rowGap = variantProperty<
-  "rowGap",
-  KnownCSSValues<"rowGap"> | CSSLengthPercentage
->("rowGap");
+export const justifySelf: Property.JustifySelf = (arg: unknown) =>
+  ["justifySelf", arg as Values["justifySelf"]] as const;

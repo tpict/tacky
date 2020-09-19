@@ -1,24 +1,25 @@
-import { KnownCSSValues } from "../types";
-import { CSSTime } from "../unit";
-import { knownUnionProperty, variantProperty } from "../utils";
+// TODO: Multiple values for each of these
+import { Property, Values } from "../generated/types";
 
-export const animationDelay = variantProperty<
-  "animationDelay",
-  KnownCSSValues<"animationDelay"> | CSSTime
->("animationDelay");
+export const animationDelay: Property.AnimationDelay = (arg: unknown) =>
+  ["animationDelay", arg as Values["animationDelay"]] as const;
 
-export const animationDirection = knownUnionProperty("animationDirection");
+export const animationDirection: Property.AnimationDirection = (arg: unknown) =>
+  ["animationDirection", arg as Values["animationDirection"]] as const;
 
-export const animationDuration = variantProperty<
-  "animationDuration",
-  KnownCSSValues<"animationDuration"> | CSSTime
->("animationDuration");
+export const animationDuration: Property.AnimationDuration = (arg: unknown) =>
+  ["animationDuration", arg as Values["animationDuration"]] as const;
 
-export const animationFillMode = knownUnionProperty("animationFillMode");
+export const animationFillMode: Property.AnimationFillMode = (arg: unknown) =>
+  ["animationFillMode", arg as Values["animationFillMode"]] as const;
 
-export const animationIterationCount = variantProperty<
-  "animationIterationCount",
-  KnownCSSValues<"animationIterationCount"> | CSSTime
->("animationIterationCount");
+export const animationIterationCount: Property.AnimationIterationCount = (
+  arg: unknown
+) =>
+  [
+    "animationIterationCount",
+    arg as Values["animationIterationCount"],
+  ] as const;
 
-export const animationPlayState = knownUnionProperty("animationPlayState");
+export const animationPlayState: Property.AnimationPlayState = (arg: unknown) =>
+  ["animationPlayState", arg as Values["animationPlayState"]] as const;

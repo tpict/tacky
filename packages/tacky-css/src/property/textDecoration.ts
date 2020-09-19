@@ -1,37 +1,39 @@
-import * as CSS from "csstype";
 import { CSSColor } from "../color";
-import { KnownCSSValues, TypedCSSProperties } from "../types";
 import { CSSLengthPercentage } from "../unit";
-import { knownUnionProperty, PropertyTuple, variantProperty } from "../utils";
+import { Property, Values } from "../generated/types";
 
-export const textDecorationColor = variantProperty<
-  "textDecorationColor",
-  CSSColor
->("textDecorationColor");
+declare module "../generated/types" {
+  namespace Property {
+    export interface TextDecorationLine {
+      (
+        // TODO: Prevent duplicate keyword arguments
+        ...lines: [TextDecorationLineKeyword, ...TextDecorationLineKeyword[]]
+      ): PropertyTuple<"textDecorationLine">;
+    }
 
-type TextDecorationLineKeyword = "underline" | "overline" | "line-through";
+    export interface TextShadow {
+      (...shadows: [TextShadowArgs, ...TextShadowArgs[]]): PropertyTuple<
+        "textShadow"
+      >;
+    }
+  }
+}
 
-// TODO: Prevent duplicate keyword arguments
-export const textDecorationLineValue = (
-  ...args:
-    | [keyword: CSS.Globals | "none"]
-    | [...lines: [TextDecorationLineKeyword, ...TextDecorationLineKeyword[]]]
-): PropertyTuple<"textDecorationLine"> =>
+type TextDecorationLineKeyword =
+  | "blink"
+  | "grammar-error"
+  | "line-through"
+  | "overline"
+  | "spelling-error"
+  | "underline";
+
+export const textDecorationLine: Property.TextDecorationLine = (
+  ...args: unknown[]
+) =>
   [
     "textDecorationLine",
-    args.join(" ") as TypedCSSProperties["textDecorationLine"],
+    args.join(" ") as Values["textDecorationLine"],
   ] as const;
-
-export const textDecorationSkipInk = knownUnionProperty(
-  "textDecorationSkipInk"
-);
-
-export const textDecorationStyle = knownUnionProperty("textDecorationStyle");
-
-export const textDecorationThickness = variantProperty<
-  "textDecorationThickness",
-  KnownCSSValues<"textDecorationThickness"> | CSSLengthPercentage
->("textDecorationThickness");
 
 type TextShadowArgs =
   | [offsetX: CSSLengthPercentage, offsetY: CSSLengthPercentage]
@@ -52,16 +54,10 @@ type TextShadowArgs =
       color: CSSColor
     ];
 
-export interface TextShadow {
-  (...args: TextShadowArgs): PropertyTuple<"textShadow">;
-  (...args: [TextShadowArgs, ...TextShadowArgs[]]): PropertyTuple<"textShadow">;
-}
-
-export const textShadow: TextShadow = (
-  ...args: unknown[]
-): PropertyTuple<"textShadow"> => [
-  "textShadow",
-  (Array.isArray(args[0])
-    ? args.map(shadow => (shadow as string[]).join(" ")).join("; ")
-    : args.join(" ")) as TypedCSSProperties["textShadow"],
-];
+export const textShadow: Property.TextShadow = (...args: unknown[]) =>
+  [
+    "textShadow",
+    (Array.isArray(args[0])
+      ? args.map(shadow => (shadow as string[]).join(" ")).join("; ")
+      : args.join(" ")) as Values["textShadow"],
+  ] as const;

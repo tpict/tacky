@@ -1,9 +1,4 @@
-import { knownUnionProperty } from "../utils";
+import { Values, Property } from "../generated/types";
 
-export const direction = knownUnionProperty("direction");
-
-export const textCombineUpright = knownUnionProperty("textCombineUpright");
-
-export const textOrientation = knownUnionProperty("textOrientation");
-
-export const writingMode = knownUnionProperty("writingMode");
+export const textCombineUpright: Property.TextCombineUpright = (arg: unknown) =>
+  ["textCombineUpright", arg as Values["textCombineUpright"]] as const;

@@ -1,21 +1,15 @@
-import * as CSS from "csstype";
-import { TackyVariant } from "../types";
-import { PropertyTuple } from "../utils";
-
-// TODO: Prevent duplicate keyword arguments
-export type ContainValue = TackyVariant<"contain">;
-
-type ContainUnaryKeyword = "none" | "strict" | "content";
+import { Values, Property } from "../generated/types";
 
 type ContainMultipleKeyword = "size" | "layout" | "style" | "paint";
 
-export interface Contain {
-  (global: CSS.Globals): PropertyTuple<"contain">;
-  (keyword: ContainUnaryKeyword | ContainMultipleKeyword): PropertyTuple<
-    "contain"
-  >;
-  (...keywords: ContainMultipleKeyword[]): PropertyTuple<"contain">;
+declare module "../generated/types" {
+  namespace Property {
+    export interface Contain {
+      // TODO: Prevent duplicate keyword arguments
+      (...keywords: ContainMultipleKeyword[]): PropertyTuple<"contain">;
+    }
+  }
 }
 
-export const contain: Contain = (...args: unknown[]) =>
-  ["contain", args.join(" ") as ContainValue] as const;
+export const contain: Property.Contain = (...args: unknown[]) =>
+  ["contain", args.join(" ") as Values["contain"]] as const;

@@ -33,130 +33,181 @@ const printer = ts.createPrinter({
   newLine: ts.NewLineKind.LineFeed,
 });
 
-const nodes: ts.Node[] = [];
+class Namespace {
+  private readonly name: string;
+  private readonly nodes: ts.Statement[];
+  private readonly mapping: Record<string, ts.TypeReferenceNode>;
+  static readonly all: Namespace[] = [];
+
+  constructor(name: string) {
+    this.name = name;
+    this.nodes = [];
+    this.mapping = {};
+    Namespace.all.push(this);
+  }
+
+  push(name: string, expression: ts.TypeNode): void {
+    const formattedName = _.pascalCase(name);
+
+    if (this.mapping[formattedName]) {
+      return;
+    }
+
+    const node = factory.createTypeAliasDeclaration(
+      undefined,
+      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+      factory.createIdentifier(formattedName),
+      undefined,
+      expression
+    );
+
+    this.nodes.push(node);
+
+    this.mapping[formattedName] = factory.createTypeReferenceNode(
+      factory.createQualifiedName(
+        factory.createIdentifier(this.name),
+        factory.createIdentifier(formattedName)
+      )
+    );
+  }
+
+  retrieve(name: string): ts.TypeReferenceNode {
+    const formattedName = _.pascalCase(name);
+    return this.mapping[formattedName];
+  }
+
+  get node(): ts.ModuleDeclaration {
+    return factory.createModuleDeclaration(
+      undefined,
+      [ts.createModifier(ts.SyntaxKind.DeclareKeyword)],
+      factory.createIdentifier(this.name),
+      factory.createModuleBlock(this.nodes)
+    );
+  }
+}
+
+const dataTypeNamespace = new Namespace("DataType");
+const methodNamespace = new Namespace("Method");
+const propertyNamespace = new Namespace("Property");
 
 const lengthUnits = ["px", "rem"];
 const timeUnits = ["s", "ms"];
 const angleUnits = ["deg", "rad"];
 const resolutionUnits = ["dpi", "dpcm"];
 
-const createUnit = (name: string, symbol: string): ts.TypeAliasDeclaration =>
-  factory.createTypeAliasDeclaration(
-    undefined,
-    undefined,
-    factory.createIdentifier(name),
-    undefined,
-    factory.createTemplateLiteralType(factory.createTemplateHead("", ""), [
-      factory.createTemplateLiteralTypeSpan(
-        ts.TemplateCasing.None,
-        factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
-        factory.createTemplateTail(symbol, symbol)
-      ),
-    ])
-  );
+const createUnit = (symbol: string): ts.TypeNode =>
+  factory.createTemplateLiteralType(factory.createTemplateHead("", ""), [
+    factory.createTemplateLiteralTypeSpan(
+      ts.TemplateCasing.None,
+      factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+      factory.createTemplateTail(symbol, symbol)
+    ),
+  ]);
 
-[lengthUnits, timeUnits, angleUnits].flat().forEach(unit => {
-  nodes.push(createUnit(_.upperFirst(unit), unit));
+[lengthUnits, timeUnits, angleUnits, resolutionUnits].flat().forEach(unit => {
+  dataTypeNamespace.push(_.upperFirst(unit), createUnit(unit));
 });
 
 [
-  ["Length", lengthUnits] as const,
-  ["Time", timeUnits] as const,
-  ["Angle", angleUnits] as const,
-  ["Resolution", resolutionUnits] as const,
+  ["length", lengthUnits] as const,
+  ["time", timeUnits] as const,
+  ["angle", angleUnits] as const,
+  ["resolution", resolutionUnits] as const,
 ].forEach(([typeName, units]) => {
-  nodes.push(
-    factory.createTypeAliasDeclaration(
-      undefined,
-      undefined,
-      factory.createIdentifier(typeName),
-      undefined,
-      factory.createUnionTypeNode(
-        units.map(unit =>
-          factory.createTypeReferenceNode(
-            factory.createIdentifier(_.upperFirst(unit)),
-            undefined
-          )
+  dataTypeNamespace.push(
+    typeName,
+    factory.createUnionTypeNode(
+      units.map(unit =>
+        factory.createTypeReferenceNode(
+          factory.createIdentifier(_.upperFirst(unit)),
+          undefined
         )
       )
     )
   );
 });
 
-nodes.push(createUnit("Percentage", "%"));
+dataTypeNamespace.push("percentage", createUnit("%"));
+dataTypeNamespace.push(
+  "number",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
+);
+dataTypeNamespace.push(
+  "string",
+  factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+);
 
-const dataTypes: Record<
-  string,
-  | ts.TypeReferenceNode
-  | ts.UnionTypeNode
-  | ts.KeywordTypeNode<ts.KeywordTypeSyntaxKind>
-> = {
-  angle: factory.createTypeReferenceNode(factory.createIdentifier("Angle")),
-  length: factory.createTypeReferenceNode(factory.createIdentifier("Length")),
-  percentage: factory.createTypeReferenceNode(
-    factory.createIdentifier("Length")
-  ),
-  time: factory.createTypeReferenceNode(factory.createIdentifier("Time")),
-  resolution: factory.createTypeReferenceNode(
-    factory.createIdentifier("Resolution")
-  ),
-  number: factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
-  string: factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+// TODO: the MDN syntax is invalid
+dataTypeNamespace.push(
+  "line-names",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
 
-  // TODO: the MDN syntax is invalid
-  "line-names": factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
+// TODO actually check integers
+dataTypeNamespace.push(
+  "integer",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
+);
 
-  // TODO actually check integers
-  integer: factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+// TODO
+dataTypeNamespace.push(
+  "custom-ident",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
+dataTypeNamespace.push(
+  "hex-color",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
+dataTypeNamespace.push(
+  "url",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
+dataTypeNamespace.push(
+  "ratio",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
+dataTypeNamespace.push(
+  "x",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
+dataTypeNamespace.push(
+  "y",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
+dataTypeNamespace.push(
+  "number [1,1000]",
+  factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
+);
 
-  // TODO
-  "custom-ident": factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
-  "hex-color": factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
-  url: factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
-  ratio: factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
-  x: factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
-  y: factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
-  "number [1,1000]": factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
-};
-
-dataTypes["length-percentage"] = factory.createUnionTypeNode([
-  dataTypes["length"],
-  dataTypes["percentage"],
-]);
-
-const methods: Record<string, ts.TypeReferenceNode> = {};
+dataTypeNamespace.push(
+  "length-percentage",
+  factory.createUnionTypeNode([
+    dataTypeNamespace.retrieve("length"),
+    dataTypeNamespace.retrieve("percentage"),
+  ])
+);
 
 const createMethod = (term: MethodTerm): ts.TypeReferenceNode => {
-  if (methods[term.name]) {
-    return methods[term.name];
+  if (methodNamespace.retrieve(term.name)) {
+    return methodNamespace.retrieve(term.name);
   }
 
-  nodes.push(
-    factory.createTypeAliasDeclaration(
-      undefined,
-      undefined,
-      factory.createIdentifier(_.pascalCase(term.name)),
-      undefined,
-      factory.createTemplateLiteralType(
-        factory.createTemplateHead(`${term.name}(`, `${term.name}(`),
-        [
-          factory.createTemplateLiteralTypeSpan(
-            ts.TemplateCasing.None,
-            // TODO tighten this up
-            factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-            factory.createTemplateTail(")", ")")
-          ),
-        ]
-      )
+  methodNamespace.push(
+    term.name,
+    factory.createTemplateLiteralType(
+      factory.createTemplateHead(`${term.name}(`, `${term.name}(`),
+      [
+        factory.createTemplateLiteralTypeSpan(
+          ts.TemplateCasing.None,
+          // TODO tighten this up
+          factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+          factory.createTemplateTail(")", ")")
+        ),
+      ]
     )
   );
 
-  methods[term.name] = factory.createTypeReferenceNode(
-    factory.createIdentifier(_.pascalCase(term.name)),
-    undefined
-  );
-
-  return methods[term.name];
+  return methodNamespace.retrieve(term.name);
 };
 
 const createDataType = (
@@ -165,42 +216,40 @@ const createDataType = (
   | ts.TypeReferenceNode
   | ts.UnionTypeNode
   | ts.KeywordTypeNode<ts.KeywordTypeSyntaxKind> => {
-  if (dataTypes[term.name]) {
-    return dataTypes[term.name];
+  if (dataTypeNamespace.retrieve(term.name)) {
+    return dataTypeNamespace.retrieve(term.name);
+  }
+
+  if (propertyNamespace.retrieve(term.name)) {
+    return propertyNamespace.retrieve(term.name);
   }
 
   let syntax = MDNSyntaxes[term.name as keyof typeof MDNSyntaxes]?.syntax;
+  let currentNamespace = dataTypeNamespace;
 
   if (!syntax) {
     syntax = MDNProperties[term.name as keyof typeof MDNProperties]?.syntax;
+    currentNamespace = propertyNamespace;
   }
 
   if (!syntax) {
     throw new Error(`Unknown syntax "${term.name}"`);
   }
 
-  const parsedSyntax = createSyntax(resolveSyntax(syntax));
+  const resolvedSyntax = resolveSyntax(syntax);
+  if (resolvedSyntax.type === TermType.METHOD) {
+    currentNamespace = methodNamespace;
+  }
+
+  const parsedSyntax = createSyntax(resolvedSyntax);
 
   if (!parsedSyntax) {
     throw new Error(`Got null node for data-type ${term.name}`);
   }
 
-  nodes.push(
-    factory.createTypeAliasDeclaration(
-      undefined,
-      undefined,
-      factory.createIdentifier(_.pascalCase(term.name)),
-      undefined,
-      parsedSyntax
-    )
-  );
+  currentNamespace.push(term.name, parsedSyntax);
 
-  dataTypes[term.name] = factory.createTypeReferenceNode(
-    factory.createIdentifier(_.pascalCase(term.name)),
-    undefined
-  );
-
-  return dataTypes[term.name];
+  return currentNamespace.retrieve(term.name);
 };
 
 let debugStack: Term[] = [];
@@ -211,7 +260,7 @@ type ReferenceNode =
   | ts.UnionTypeNode
   | ts.KeywordTypeNode<ts.KeywordTypeSyntaxKind>;
 
-const createSyntax = (term: Term): null | ReferenceNode => {
+const createSyntax = (term: Term): null | ts.TypeNode => {
   if (term._value.startsWith("subgrid")) {
     // Experimental feature that opens a Pandora's Box of undocumented data types
     return null;
@@ -258,7 +307,7 @@ const createSyntax = (term: Term): null | ReferenceNode => {
   );
 };
 
-const createProperty = (name: string): ts.Node => {
+const createProperty = (name: string): ts.TypeNode => {
   const term = resolveSyntax(
     MDNProperties[name as keyof typeof MDNProperties].syntax
   );
@@ -269,13 +318,7 @@ const createProperty = (name: string): ts.Node => {
     throw new Error(`Got null node for property ${name}`);
   }
 
-  return factory.createTypeAliasDeclaration(
-    undefined,
-    undefined,
-    factory.createIdentifier(_.camelCase(name)),
-    undefined,
-    syntax
-  );
+  return syntax;
 };
 
 Object.keys(MDNProperties).forEach(name => {
@@ -284,13 +327,15 @@ Object.keys(MDNProperties).forEach(name => {
   }
 
   try {
-    nodes.push(createProperty(name));
+    propertyNamespace.push(name, createProperty(name));
     debugStack = [];
   } catch (err) {
     console.error(`Failed creating property ${name}`);
     throw err;
   }
 });
+
+const nodes = Namespace.all.map(namespace => namespace.node);
 
 let tacky = printer.printList(
   ts.ListFormat.None,

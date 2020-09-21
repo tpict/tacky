@@ -12,18 +12,27 @@ import {
   TermMultiplier,
   TermCombinator,
 } from "css-syntax-parser";
-import ts, { factory } from "typescript";
+import ts, { factory, SyntaxKind } from "typescript";
+import "lodash.combinations";
 import _ from "lodash";
 
 const CSS_HASH_MARK_MULTIPLIER_LIMIT = 3;
 
 _.mixin({ pascalCase: _.flow(_.camelCase, _.upperFirst) });
 
-const getAllPermutations = <T extends unknown[]>(arr: T): T[] => [arr];
+const getAllCombinations = <T extends unknown[]>(arr: T): T[] => {
+  if (arr.length >= 10) {
+    throw new Error(
+      `getAllCombinations received oversize input: ${JSON.stringify(arr)}`
+    );
+  }
+  return arr.flatMap((_e, idx) => _.combinations(arr, idx + 1));
+};
 
 declare module "lodash" {
   export interface LoDashStatic {
     pascalCase(string?: string): string;
+    combinations<T extends unknown[]>(arr: T, n: number): T[];
   }
 }
 
@@ -154,10 +163,11 @@ dataTypeNamespace.push(
   factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
 );
 
-// TODO actually check integers
+// TODO: Not sure if this is OK. The validation is fine but it would be poor
+// practice to coerce integer numbers to BigInt just for type checking.
 dataTypeNamespace.push(
   "integer",
-  factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
+  factory.createKeywordTypeNode(ts.SyntaxKind.BigIntKeyword)
 );
 
 // TODO
@@ -186,7 +196,7 @@ dataTypeNamespace.push(
   factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
 );
 dataTypeNamespace.push(
-  "number [1,1000]",
+  "number [1,1000]", // ?????
   factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)
 );
 
@@ -263,6 +273,38 @@ const createDataType = (
   return currentNamespace.retrieve(term.name);
 };
 
+const createRangeMultiplier = (
+  type: ts.TypeNode,
+  min: number,
+  max: number
+): ts.TypeNode => {
+  if (min === 0) {
+    // TODO handle this correctly
+    min = 1;
+  }
+
+  return factory.createUnionTypeNode(
+    _.range(min, max + 1).map(n => {
+      if (n === 1) {
+        return type;
+      }
+
+      return factory.createTemplateLiteralType(
+        factory.createTemplateHead("", ""),
+        _.range(n).map(count =>
+          factory.createTemplateLiteralTypeSpan(
+            ts.TemplateCasing.None,
+            type,
+            count < n - 1
+              ? factory.createTemplateMiddle(" ", " ")
+              : factory.createTemplateTail("", "")
+          )
+        )
+      );
+    })
+  );
+};
+
 const createBrackets = (term: BracketsTerm): ts.TypeNode => {
   const type = createSyntax((term as BracketsTerm).content);
 
@@ -275,37 +317,12 @@ const createBrackets = (term: BracketsTerm): ts.TypeNode => {
   }
 
   if (term.multiplier === TermMultiplier.RANGE) {
-    let { min } = term.range;
-    const { max } = term.range;
+    const { min, max } = term.range;
     if (min === undefined || max === undefined) {
       throw new Error("Received range multiplier with missing limits");
     }
 
-    if (min === 0) {
-      // TODO handle this properly?
-      min = 1;
-    }
-
-    return factory.createUnionTypeNode(
-      _.range(min, max + 1).map(n => {
-        if (n === 1) {
-          return type;
-        }
-
-        return factory.createTemplateLiteralType(
-          factory.createTemplateHead("", ""),
-          _.range(n).map(count =>
-            factory.createTemplateLiteralTypeSpan(
-              ts.TemplateCasing.None,
-              type,
-              count < n - 1
-                ? factory.createTemplateMiddle(" ", " ")
-                : factory.createTemplateTail("", "")
-            )
-          )
-        );
-      })
-    );
+    return createRangeMultiplier(type, min, max);
   }
 
   if (term.multiplier === TermMultiplier.LIST) {
@@ -331,25 +348,74 @@ const createBrackets = (term: BracketsTerm): ts.TypeNode => {
     );
   }
 
-  return type;
-  // throw new Error(`Unhandled multiplier type ${term.multiplier}`);
+  if (term.multiplier === TermMultiplier.ZERO_OR_MORE) {
+    return createRangeMultiplier(type, 0, CSS_HASH_MARK_MULTIPLIER_LIMIT);
+  }
+
+  if (term.multiplier === TermMultiplier.ONE_OR_MORE) {
+    return createRangeMultiplier(type, 1, CSS_HASH_MARK_MULTIPLIER_LIMIT);
+  }
+
+  if (term.multiplier === TermMultiplier.OPTIONAL) {
+    return factory.createUnionTypeNode([
+      type,
+      factory.createLiteralTypeNode(factory.createStringLiteral("")),
+    ]);
+  }
+
+  if (term.multiplier === TermMultiplier.REQUIRED) {
+    // TODO: Implement this
+    return type;
+  }
+
+  throw new Error(`Unhandled multiplier type ${term.multiplier}`);
 };
 
 const createComposed = (term: ComposedTerm): ts.TypeNode => {
   if (term.combinator === TermCombinator.JUXTAPOSITION) {
+    const syntaxes = term.children.map(child => {
+      const isOptional =
+        (child as BracketsTerm).multiplier === TermMultiplier.OPTIONAL;
+      if (isOptional) {
+        (child as any).multiplier = undefined;
+      }
+
+      const type = createSyntax(child);
+      if (!type) {
+        throw new Error();
+      }
+
+      return [type, isOptional] as const;
+    });
+
     return factory.createTemplateLiteralType(
       factory.createTemplateHead("", ""),
-      term.children.map((child, idx) => {
-        const type = createSyntax(child);
-        if (!type) {
-          throw new Error();
+      syntaxes.map(([type, isOptional], idx) => {
+        if (isOptional && idx > 0) {
+          type = factory.createUnionTypeNode([
+            factory.createLiteralTypeNode(factory.createStringLiteral("")),
+            factory.createTemplateLiteralType(
+              factory.createTemplateHead(" ", " "),
+              [
+                factory.createTemplateLiteralTypeSpan(
+                  ts.TemplateCasing.None,
+                  type,
+                  factory.createTemplateTail("", "")
+                ),
+              ]
+            ),
+          ]);
         }
+
+        const isNextOptional =
+          idx < syntaxes.length - 1 && syntaxes[idx + 1][1];
+        const separator = isNextOptional ? "" : " ";
 
         return factory.createTemplateLiteralTypeSpan(
           ts.TemplateCasing.None,
           type,
           idx < term.children.length - 1
-            ? factory.createTemplateMiddle(" ", " ")
+            ? factory.createTemplateMiddle(separator, separator)
             : factory.createTemplateTail("", "")
         );
       })
@@ -364,9 +430,12 @@ const createComposed = (term: ComposedTerm): ts.TypeNode => {
     );
   }
 
+  // Not an accurate representation-this only allows for children to appear in
+  // the order defined by the syntax (i.e. combinations, not permutations).
+  // Considering all possibilities quickly results in OOM errors
   if (term.combinator === TermCombinator.DOUBLE_BAR) {
     return factory.createUnionTypeNode(
-      getAllPermutations(term.children).map(selectedChildren => {
+      getAllCombinations(term.children).map(selectedChildren => {
         if (selectedChildren.length === 1) {
           const type = createSyntax(selectedChildren[0]);
           if (!type) {
@@ -396,11 +465,32 @@ const createComposed = (term: ComposedTerm): ts.TypeNode => {
     );
   }
 
-  return factory.createUnionTypeNode(
-    term.children
-      .map(createSyntax)
-      .filter((node): node is ts.TypeNode => !!node)
-  );
+  // As above, values must appear in-order
+  if (term.combinator === TermCombinator.DOUBLE_AMPERSAND) {
+    return factory.createUnionTypeNode(
+      _.combinations(term.children, term.children.length).map(children =>
+        factory.createTemplateLiteralType(
+          factory.createTemplateHead("", ""),
+          children.map((child, idx) => {
+            const type = createSyntax(child);
+            if (!type) {
+              throw new Error();
+            }
+
+            return factory.createTemplateLiteralTypeSpan(
+              ts.TemplateCasing.None,
+              type,
+              idx < children.length - 1
+                ? factory.createTemplateMiddle(" ", " ")
+                : factory.createTemplateTail("", "")
+            );
+          })
+        )
+      )
+    );
+  }
+
+  throw new Error(`Received unknown combinator: "${term.combinator}"`);
 };
 
 let debugStack: Term[] = [];
@@ -463,7 +553,18 @@ const createProperty = (name: string): ts.TypeNode => {
 };
 
 Object.keys(MDNProperties).forEach(name => {
-  if (["--*", "default"].includes(name)) {
+  if (
+    [
+      "--*",
+      "default",
+
+      // Too complex to represent :(
+      "font-variant", // word offender, causes OOM
+      "-webkit-mask",
+      "mask",
+      "background",
+    ].includes(name)
+  ) {
     return;
   }
 
@@ -476,11 +577,9 @@ Object.keys(MDNProperties).forEach(name => {
   }
 });
 
-const nodes = Namespace.all.map(namespace => namespace.node);
-
 let tacky = printer.printList(
   ts.ListFormat.None,
-  factory.createNodeArray(nodes),
+  ts.createNodeArray(Namespace.all.map(namespace => namespace.node)),
   sourceFile
 );
 

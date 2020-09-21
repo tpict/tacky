@@ -27,6 +27,11 @@ extend@3.0.2:
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
 
+lodash.combinations@^18.10.0:
+  version "18.10.0"
+  resolved "https://registry.yarnpkg.com/lodash.combinations/-/lodash.combinations-18.10.0.tgz#9b8702b86f090a33cd8a07831809ca2f496b82a9"
+  integrity sha512-r4dZ+29r4KfFaih2W+dAUZXYEI6YSMHTaplM7Int08p4/X4j3hxZRMfzvOHCnTGGEeYFeEHZA3K8p3/S0cSS1Q==
+
 lodash@^4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"

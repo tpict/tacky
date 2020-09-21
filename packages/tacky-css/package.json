@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "css-syntax-parser": "^1.5.1",
+    "lodash.combinations": "^18.10.0",
     "mdn-browser-compat-data": "git+https://github.com/mdn/browser-compat-data.git#bce11b3da31a3b3425280730360ee42d7cc55328",
     "mdn-data": "git+https://github.com/mdn/data.git#3191d4b889364bca969dfcc84e490928d84710ef",
     "ts-node": "^9.0.0",

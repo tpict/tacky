@@ -9,11 +9,17 @@ import {
   DataTypeTerm,
   MethodTerm,
   BracketsTerm,
+  TermMultiplier,
+  TermCombinator,
 } from "css-syntax-parser";
 import ts, { factory } from "typescript";
 import _ from "lodash";
 
+const CSS_HASH_MARK_MULTIPLIER_LIMIT = 3;
+
 _.mixin({ pascalCase: _.flow(_.camelCase, _.upperFirst) });
+
+const getAllPermutations = <T extends unknown[]>(arr: T): T[] => [arr];
 
 declare module "lodash" {
   export interface LoDashStatic {
@@ -22,7 +28,7 @@ declare module "lodash" {
 }
 
 const sourceFile = ts.createSourceFile(
-  "tacky.ts",
+  "build/tacky.ts",
   "",
   ts.ScriptTarget.Latest,
   false,
@@ -35,12 +41,14 @@ const printer = ts.createPrinter({
 
 class Namespace {
   private readonly name: string;
+  private readonly isPrivate: boolean;
   private readonly nodes: ts.Statement[];
   private readonly mapping: Record<string, ts.TypeReferenceNode>;
   static readonly all: Namespace[] = [];
 
-  constructor(name: string) {
+  constructor(name: string, isPrivate: boolean) {
     this.name = name;
+    this.isPrivate = isPrivate;
     this.nodes = [];
     this.mapping = {};
     Namespace.all.push(this);
@@ -79,16 +87,19 @@ class Namespace {
   get node(): ts.ModuleDeclaration {
     return factory.createModuleDeclaration(
       undefined,
-      [ts.createModifier(ts.SyntaxKind.DeclareKeyword)],
+      this.isPrivate
+        ? [ts.createModifier(ts.SyntaxKind.ExportKeyword)]
+        : undefined,
       factory.createIdentifier(this.name),
-      factory.createModuleBlock(this.nodes)
+      factory.createModuleBlock(this.nodes),
+      ts.NodeFlags.Namespace
     );
   }
 }
 
-const dataTypeNamespace = new Namespace("DataType");
-const methodNamespace = new Namespace("Method");
-const propertyNamespace = new Namespace("Property");
+const dataTypeNamespace = new Namespace("DataType", false);
+const methodNamespace = new Namespace("Method", false);
+const propertyNamespace = new Namespace("Property", true);
 
 const lengthUnits = ["px", "rem"];
 const timeUnits = ["s", "ms"];
@@ -252,13 +263,147 @@ const createDataType = (
   return currentNamespace.retrieve(term.name);
 };
 
-let debugStack: Term[] = [];
+const createBrackets = (term: BracketsTerm): ts.TypeNode => {
+  const type = createSyntax((term as BracketsTerm).content);
 
-type ReferenceNode =
-  | ts.LiteralTypeNode
-  | ts.TypeReferenceNode
-  | ts.UnionTypeNode
-  | ts.KeywordTypeNode<ts.KeywordTypeSyntaxKind>;
+  if (!type) {
+    throw new Error("Failed to parse bracket syntax");
+  }
+
+  if (term.multiplier === undefined) {
+    return type;
+  }
+
+  if (term.multiplier === TermMultiplier.RANGE) {
+    let { min } = term.range;
+    const { max } = term.range;
+    if (min === undefined || max === undefined) {
+      throw new Error("Received range multiplier with missing limits");
+    }
+
+    if (min === 0) {
+      // TODO handle this properly?
+      min = 1;
+    }
+
+    return factory.createUnionTypeNode(
+      _.range(min, max + 1).map(n => {
+        if (n === 1) {
+          return type;
+        }
+
+        return factory.createTemplateLiteralType(
+          factory.createTemplateHead("", ""),
+          _.range(n).map(count =>
+            factory.createTemplateLiteralTypeSpan(
+              ts.TemplateCasing.None,
+              type,
+              count < n - 1
+                ? factory.createTemplateMiddle(" ", " ")
+                : factory.createTemplateTail("", "")
+            )
+          )
+        );
+      })
+    );
+  }
+
+  if (term.multiplier === TermMultiplier.LIST) {
+    return factory.createUnionTypeNode(
+      _.range(1, CSS_HASH_MARK_MULTIPLIER_LIMIT + 1).map(n => {
+        if (n === 1) {
+          return type;
+        }
+
+        return factory.createTemplateLiteralType(
+          factory.createTemplateHead("", ""),
+          _.range(n).map(count =>
+            factory.createTemplateLiteralTypeSpan(
+              ts.TemplateCasing.None,
+              type,
+              count < n - 1
+                ? factory.createTemplateMiddle(", ", ", ")
+                : factory.createTemplateTail("", "")
+            )
+          )
+        );
+      })
+    );
+  }
+
+  return type;
+  // throw new Error(`Unhandled multiplier type ${term.multiplier}`);
+};
+
+const createComposed = (term: ComposedTerm): ts.TypeNode => {
+  if (term.combinator === TermCombinator.JUXTAPOSITION) {
+    return factory.createTemplateLiteralType(
+      factory.createTemplateHead("", ""),
+      term.children.map((child, idx) => {
+        const type = createSyntax(child);
+        if (!type) {
+          throw new Error();
+        }
+
+        return factory.createTemplateLiteralTypeSpan(
+          ts.TemplateCasing.None,
+          type,
+          idx < term.children.length - 1
+            ? factory.createTemplateMiddle(" ", " ")
+            : factory.createTemplateTail("", "")
+        );
+      })
+    );
+  }
+
+  if (term.combinator === TermCombinator.SINGLE_BAR) {
+    return factory.createUnionTypeNode(
+      term.children
+        .map(createSyntax)
+        .filter((node): node is ts.TypeNode => !!node)
+    );
+  }
+
+  if (term.combinator === TermCombinator.DOUBLE_BAR) {
+    return factory.createUnionTypeNode(
+      getAllPermutations(term.children).map(selectedChildren => {
+        if (selectedChildren.length === 1) {
+          const type = createSyntax(selectedChildren[0]);
+          if (!type) {
+            throw new Error();
+          }
+          return type;
+        }
+
+        return factory.createTemplateLiteralType(
+          factory.createTemplateHead("", ""),
+          selectedChildren.map((child, idx) => {
+            const type = createSyntax(child);
+            if (!type) {
+              throw new Error();
+            }
+
+            return factory.createTemplateLiteralTypeSpan(
+              ts.TemplateCasing.None,
+              type,
+              idx < selectedChildren.length - 1
+                ? factory.createTemplateMiddle(" ", " ")
+                : factory.createTemplateTail("", "")
+            );
+          })
+        );
+      })
+    );
+  }
+
+  return factory.createUnionTypeNode(
+    term.children
+      .map(createSyntax)
+      .filter((node): node is ts.TypeNode => !!node)
+  );
+};
+
+let debugStack: Term[] = [];
 
 const createSyntax = (term: Term): null | ts.TypeNode => {
   if (term._value.startsWith("subgrid")) {
@@ -269,15 +414,11 @@ const createSyntax = (term: Term): null | ts.TypeNode => {
   debugStack.push(term);
 
   if (term.type === TermType.BRACKETS) {
-    return createSyntax((term as BracketsTerm).content);
+    return createBrackets(term as BracketsTerm);
   }
 
   if (term.type === TermType.COMPOSED) {
-    return factory.createUnionTypeNode(
-      (term as ComposedTerm).children
-        .map(createSyntax)
-        .filter((node): node is ReferenceNode => !!node)
-    );
+    return createComposed(term as ComposedTerm);
   }
 
   if (term.type === TermType.METHOD) {
@@ -346,4 +487,4 @@ let tacky = printer.printList(
 // in lieu of Prettier
 tacky = tacky.split(";").join(";\n");
 
-fs.writeFileSync("tacky.ts", tacky);
+fs.writeFileSync("build/tacky.ts", tacky);

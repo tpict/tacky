@@ -1,5 +1,5 @@
 {
-  "include": ["./src/*", "./mdn_types/*"],
+  "include": ["./src/*", "./mdn_types/*", "./build/*"],
   "exclude": ["./node_modules"],
 
   "compilerOptions": {
